@@ -45,10 +45,6 @@ class CfgVariables {
 };
 
 /* ---------- DO NOT CHANGE ---------- */
-
-// Hotfix to avoid respawn screen at start & Removes default spawn
-respawnOnStart = 0;
-
 class CfgFunctions {
     class Shared {
         class Actions {
@@ -59,23 +55,15 @@ class CfgFunctions {
             file = "scripts\components";
             class createSquad {};
             class disposableMarker {};
-            class getNearestArea {};
-            class getSquadComposition {};
-            class Sounds {
-                file = "scripts\components\sounds";
-                class playLocalSound {};
-            };
+            class whitelistArsenal {};
         };
         class Logic {
             file = "scripts\logic";
             class garrisonBuilding {};
-            class groupRespawnCheck {};
             class requestCAS {};
-            class vehicleSpawnCheck {};
-            class whitelistArsenal {};
         };
         class Respawn {
-            file = "scripts\logic\respawn";
+            file = "scripts\respawn";
             class boardVehicle {};
             class respawn {};
             class respawnInit {};
@@ -97,6 +85,14 @@ class CfgFunctions {
             class enableCloseAirSupport {};
             class occupyArea {};
             class spawnReinforcements {};
+        };
+        class Utils {
+            file = "scripts\utils";
+            class getNearestArea {};
+            class getSquadComposition {};
+            class groupRespawnCheck {};
+            class playLocalSound {};
+            class vehicleSpawnCheck {};
         };
     };
 };

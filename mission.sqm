@@ -20,14 +20,14 @@ class EditorData
 	};
 	class LayerIndexProvider
 	{
-		nextID=1856;
+		nextID=1909;
 	};
 	class Camera
 	{
 		pos[]={2956.9919,31.610691,2873.1184};
-		dir[]={-0.035689384,-0.65617979,0.75380558};
-		up[]={-0.031031704,0.75458825,0.65546811};
-		aside[]={0.99892187,4.6746209e-08,0.047292743};
+		dir[]={-0.092888705,-0.69499236,0.71299177};
+		up[]={-0.08978498,0.71901709,0.68916827};
+		aside[]={0.99161994,7.4505806e-09,0.12918845};
 	};
 };
 binarizationWanted=0;
@@ -6912,7 +6912,7 @@ class Mission
 			};
 			id=3108;
 			type="RHS_UH60M";
-			atlOffset=1.9073486e-06;
+			atlOffset=-0.00099945068;
 			class CustomAttributes
 			{
 				class Attribute0
