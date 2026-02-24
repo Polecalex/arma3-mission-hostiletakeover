@@ -1,0 +1,154 @@
+/*
+ * Configurable Variables
+ * Update these variables with desired units, vehicles, etc. to be used within the missions
+ *
+ * Variable names can be retrieve from the ingame editor, hovering over the desired item and
+ * appearing under the readable name
+ *
+ * Example:
+ * Updating CAS -> vehicle to "B_Plane_CAS_01_dynamicLoadout_F" will spawn an A164 Wipeout (CAS) as CAS support
+*/
+class CfgVariables {
+    class CAS {
+        vehicle = "RHS_A10"; // RHS - USAF A10A
+        attackType = 0; // Options: 0 - Guns Run, 1 - Missiles Strike, 2 - Guns and Missiles, 3 - Bomb Strike
+    };
+    class Squads {
+        class Infantry { // Update to use RHS - Also update with Blufor and Opfor options
+            atTeam[] = {
+                "O_Soldier_TL_F",
+                "O_Soldier_AT_F",
+                "O_Soldier_AT_F",
+                "O_Soldier_F"
+            };
+            rifleSquad[] = {
+                "O_Soldier_SL_F",
+                "O_Soldier_TL_F",
+                "O_Soldier_AR_F",
+                "O_Soldier_GL_F",
+                "O_Soldier_M_F",
+                "O_medic_F",
+                "O_Soldier_LAT_F",
+                "O_Soldier_F"
+            };
+        };
+    };
+    class Units {
+        class Motorised {
+            //standard = "O_MRAP_02_hmg_F";
+            standard = "rhs_uaz_open_MDV_01"; // RHS - MSV UAZ-3151 (Open)
+        };
+        class Transport {
+            standard = "rhs_kamaz5350_open_msv";
+        }
+    };
+};
+
+/* ---------- DO NOT CHANGE ---------- */
+
+// Hotfix to avoid respawn screen at start & Removes default spawn
+respawnOnStart = 0;
+
+class CfgFunctions {
+    class Shared {
+        class Actions {
+            file = "scripts\actions";
+            class closeAirSupport {};
+        };
+        class Components {
+            file = "scripts\components";
+            class createSquad {};
+            class disposableMarker {};
+            class getNearestArea {};
+            class getSquadComposition {};
+            class Sounds {
+                file = "scripts\components\sounds";
+                class playLocalSound {};
+            };
+        };
+        class Logic {
+            file = "scripts\logic";
+            class garrisonBuilding {};
+            class groupRespawnCheck {};
+            class requestCAS {};
+            class vehicleSpawnCheck {};
+            class whitelistArsenal {};
+        };
+        class Respawn {
+            file = "scripts\logic\respawn";
+            class boardVehicle {};
+            class respawn {};
+            class respawnInit {};
+        };
+        class Spawn {
+            file = "scripts\spawn";
+            class blockade{};
+            class garrison{};
+            class patrol{};
+            class vehiclePatrol{};
+            class vehicleReinforcements {};
+        };
+        class Timers {
+            file = "scripts\timers";
+            class startReinforcementTimer {};
+        };
+        class Triggers {
+            file = "scripts\triggers";
+            class enableCloseAirSupport {};
+            class occupyArea {};
+            class spawnReinforcements {};
+        };
+    };
+};
+class CfgNotifications {
+    class CommsRelayDestroyed {
+        title = "Mission Update";
+        iconPicture = "\A3\ui_f\data\igui\cfg\simpleTasks\types\destroy_ca.paa";
+        description = "%1";
+        color[] = {0, 0.3, 0.6, 1}; // Standard BLUFOR blue
+        duration = 5;
+        priority = 5;
+    };
+    class PresenceDetected {
+        title = "Presence Detected";
+        iconPicture = "\A3\ui_f\data\map\markers\military\warning_CA.paa";
+        description = "%1";
+        color[] = {1, 1, 1, 1}; // Standard BLUFOR blue
+        duration = 5;
+        priority = 5;
+    };
+    class SupportAvailable {
+        title = "Support Available";
+        iconPicture = "\a3\ui_f\data\map\markers\nato\b_support.paa";
+        description = "%1";
+        color[] = {0, 0.3, 0.6, 1}; // Standard BLUFOR blue
+        duration = 5;
+        priority = 5;
+    };
+};
+class CfgSounds {
+    sounds[] = {};
+    class CAS_GiveEmHell {
+        name = "CAS_GiveEmHell";
+        sound[] = {"sounds\CAS\GiveEmHell.ogg", 8, 1};
+        titles[] = {};
+    };
+    class CAS_HellOnEarth {
+        name = "CAS_HellOnEarth";
+        sound[] = {"sounds\CAS\HellOnEarth.ogg", 8, 1};
+        titles[] = {};
+    };
+    class CAS_Inbound {
+        name = "CAS_Inbound";
+        sound[] = {"sounds\CAS\Inbound.ogg", 8, 1};
+        titles[] = {};
+    };
+};
+class CfgTaskTypes
+{
+	class ReinforcementTask
+	{
+		icon	= "\A3\UI_F_MP_Mark\Data\Tasks\Types\Attack_ca.paa";
+		icon3D	= "\A3\UI_F_MP_Mark\Data\Tasks\Types3D\Attack_ca.paa";
+	};
+};
