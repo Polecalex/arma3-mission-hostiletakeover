@@ -12,6 +12,7 @@ class CfgVariables {
     class CAS {
         vehicle = "RHS_A10"; // RHS - USAF A10A
         attackType = 0; // Options: 0 - Guns Run, 1 - Missiles Strike, 2 - Guns and Missiles, 3 - Bomb Strike
+        cooldown = 300; // 5 minutes (300 / 60)
     };
     class Squads {
         class Infantry { // Update to use RHS - Also update with Blufor and Opfor options
@@ -47,8 +48,8 @@ class CfgVariables {
 /* ---------- DO NOT CHANGE ---------- */
 class CfgFunctions {
     class Shared {
-        class Actions {
-            file = "scripts\actions";
+        class Menu {
+            file = "scripts\menu";
             class closeAirSupport {};
         };
         class Components {
@@ -96,6 +97,17 @@ class CfgFunctions {
         };
     };
 };
+class CfgCommunicationMenu {
+    class CloseAirSupport {
+        text = "Request CAS Strike"; // Name displayed in the menu
+        submenu = ""; // No submenu
+        expression = "[_pos] call Shared_fnc_closeAirSupport;"; // Code to execute
+        icon = "\a3\ui_f\data\gui\cfg\CommunicationMenu\cas_ca.paa"; // Icon in the menu
+        cursor = "\a3\ui_f\data\gui\cfg\CommunicationMenu\cas_ca.paa"; // Cursor when selecting target
+        enable = "missionNamespace getVariable ['casAvailable', false]"; // Condition for enabling the item
+        removeAfterExpression = 0; // 1 to remove after use, 0 to keep
+    };
+}
 class CfgNotifications {
     class CommsRelayDestroyed {
         title = "Mission Update";

@@ -1,6 +1,7 @@
 missionNamespace setVariable ["activeMarkers", []];
 
-missionNamespace setVariable ["casAvailable", true, true];
+// Default CAS Availability to false
+missionNamespace setVariable ["casAvailable", false, true];
 
 [] spawn Shared_fnc_respawnInit;
 
