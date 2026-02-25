@@ -6,7 +6,7 @@ private _casAttackType = getNumber (missionConfigFile >> "CfgVariables" >> "CAS"
 systemChat ">>> CAS departing for gun run.";
 
 // Add delay to extend ETA of splash down
-sleep 40;
+sleep _etaDuration;
 
 // Convert targetPos to Above Sea Level position
 private _posATL = ATLToASL [_targetPos select 0, _targetPos select 1, 0];
@@ -26,6 +26,7 @@ systemChat ">>> CAS strike inbound!";
 // Cleanup
 [_casModule, _etaDuration] spawn {
     params ["_module", "_delay"];
+    // Sleep ETA + 40 seconds to delete after attack
     sleep _delay + 40;
     deleteVehicle _module;
 };
