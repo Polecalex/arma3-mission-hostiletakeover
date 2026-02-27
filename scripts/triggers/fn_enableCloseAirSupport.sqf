@@ -3,17 +3,14 @@ params ["_player"];
 
 missionNamespace setVariable ["casAvailable", true, true];
 
-if !(missionNamespace getVariable ["casAvailable", false]) exitWith {};
-
 // Display Notification to all players within group.
 systemChat "Enabling CAS for leader";
 
 // Enable Close Air Support action for player
-// [_player] call Shared_fnc_closeAirSupport;
 [_player, "CloseAirSupport"] call BIS_fnc_addCommMenuItem;
 
-private _groupUnits = units group player;
-private _leader = owner (leader group player);
+private _groupUnits = units group _player;
+private _leader = owner (leader group _player);
 private _targets = _groupUnits apply {owner _x};
 _targets = (_targets arrayIntersect _targets) - [_leader]; // Remove duplicates
 
