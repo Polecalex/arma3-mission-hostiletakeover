@@ -39,6 +39,6 @@ private _soundName = selectRandom ["CAS_HellOnEarth", "CAS_GiveEmHell", "CAS_Inb
 
     [
         "SupportAvailable",
-        ["<t color='#FFFFFF'>Close Air Support is available again.</t>"]
+        ["<t color='#FFFFFF'>Close Air Support has resupplied and is available again.</t>"]
     ] remoteExec ["BIS_fnc_showNotification", _targets];
 };
