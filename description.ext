@@ -47,6 +47,8 @@ class CfgVariables {
 };
 
 /* ---------- DO NOT CHANGE ---------- */
+respawnOnStart = 0;
+
 class CfgFunctions {
     class Shared {
         class Menu {
