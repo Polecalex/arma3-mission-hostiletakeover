@@ -15,22 +15,23 @@ class CfgVariables {
         cooldown = 300; // 5 minutes (300 / 60)
     };
     class Squads {
-        class Infantry { // Update to use RHS - Also update with Blufor and Opfor options
+        class Infantry { // Update with Blufor and Opfor options
             atTeam[] = {
-                "O_Soldier_TL_F",
-                "O_Soldier_AT_F",
-                "O_Soldier_AT_F",
-                "O_Soldier_F"
+                "rhs_msv_emr_junior_sergeant",
+                "rhs_msv_emr_at",
+                "rhs_msv_emr_strelok_rpg_assist",
+                "rhs_msv_emr_LAT",
+                "rhs_msv_emr_rifleman"
             };
             rifleSquad[] = {
-                "O_Soldier_SL_F",
-                "O_Soldier_TL_F",
-                "O_Soldier_AR_F",
-                "O_Soldier_GL_F",
-                "O_Soldier_M_F",
-                "O_medic_F",
-                "O_Soldier_LAT_F",
-                "O_Soldier_F"
+                "rhs_msv_emr_sergeant",
+                "rhs_msv_emr_arifleman_rpk",
+                "rhs_msv_emr_grenadier_rpg",
+                "rhs_msv_emr_marksman",
+                "rhs_msv_emr_medic",
+                "rhs_msv_emr_LAT",
+                "rhs_msv_emr_rifleman",
+                "rhs_msv_emr_machinegunner"
             };
         };
     };
