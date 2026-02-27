@@ -5,6 +5,7 @@ waitUntil {
 
 [group blufor_leader, squad_respawn] spawn Shared_fnc_respawn;
 
+// Enables vehicle boarding if squad is in a vehicle
 addMissionEventHandler ["EntityRespawned", {
     params ["_entity", "_corpse"];
 

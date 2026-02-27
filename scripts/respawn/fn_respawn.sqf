@@ -1,5 +1,6 @@
 params ["_group", "_respawnModule"];
 
+// During playtime, keep Respawn Module location up-to-date with group average location.
 while { true } do {
     private _aliveUnits = units _group select { alive _x };
 
