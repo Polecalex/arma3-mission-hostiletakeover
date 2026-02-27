@@ -7,3 +7,11 @@ systemChat "All units Cleared!";
 
 // Respawn
 // ["city_occupation", 30, 5, []] execVM "scripts\fn_occupyArea.sqf";
+
+// Script for enabling close air support (for trigger)
+private _leader = missionNamespace getVariable ["blufor_leader", objNull];
+if (isNull _leader) exitWith {};
+
+if (player isEqualTo _leader) then {
+  [player] call Shared_fnc_enableCloseAirSupport;
+};
