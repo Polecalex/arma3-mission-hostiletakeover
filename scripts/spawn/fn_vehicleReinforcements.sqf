@@ -1,6 +1,6 @@
-params ["_pos", "_squadType", ["_vehicleCount", 1]];
+params ["_pos", "_vehicle", "_squadType", ["_vehicleCount", 1]];
 
-private _vehicleType = getText (missionConfigFile >> "CfgVariables" >> "Units" >> "Transport" >> "standard");
+private _vehicleType = getText (missionConfigFile >> "CfgVariables" >> "Units" >> toLower _vehicle);
 
 private _allCrewGroups = [];
 private _allPassengerGroups = [];

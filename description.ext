@@ -40,9 +40,7 @@ class CfgVariables {
             //standard = "O_MRAP_02_hmg_F";
             standard = "rhs_uaz_open_MDV_01"; // RHS - MSV UAZ-3151 (Open)
         };
-        class Transport {
-            standard = "rhs_kamaz5350_open_msv";
-        }
+        transport = "rhs_kamaz5350_open_msv";
     };
 };
 

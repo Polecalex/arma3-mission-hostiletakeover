@@ -12,8 +12,8 @@ private _pos = getMarkerPos _markerName;
 
 [_taskName, "FAILED", true] call BIS_fnc_taskSetState;
 
-// Create multiple vehicles with squads
-([_pos, "rifle", _vehicleCount] call Shared_fnc_vehicleReinforcements) params ["_allCrewGroups", "_allPassengerGroups", "_allVehicles"];
+// Create multiple transports vehicles with squads
+([_pos, "Transport", "rifle", _vehicleCount] call Shared_fnc_vehicleReinforcements) params ["_allCrewGroups", "_allPassengerGroups", "_allVehicles"];
 
 // Process each vehicle
 {
