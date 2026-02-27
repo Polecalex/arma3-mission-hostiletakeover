@@ -19,15 +19,6 @@ for "_i" from 1 to _groupCount do {
 
     _spawnPos = [_spawnPos, 0, 50, 3, 0, 0.5, 0] call BIS_fnc_findSafePos;
 
-    //private _group = createGroup [east, true];
-
-    // Variable group size (3-6 soldiers)
-    //private _groupSize = 3 + floor random 4;
-
-    //for "_j" from 1 to _groupSize do {
-    //    _group createUnit ["O_Soldier_F", _spawnPos, [], 5, "NONE"];
-    //};
-
     private _group = [_spawnPos, "rifle"] call Shared_fnc_createSquad;
 
     [_group] spawn Shared_fnc_garrisonBuilding;
