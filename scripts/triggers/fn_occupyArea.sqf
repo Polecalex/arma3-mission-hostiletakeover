@@ -1,4 +1,4 @@
-params ["_marker", "_vehiclePatrols", "_blockadeMarkers", ["_density", "medium"]];
+params ["_marker", ["_blockadeMarkers", []], ["_vehiclePatrols", 0], ["_density", "medium"]];
 
 private _divisor = switch (_density) do {
     case "light": {2000 + random 500};    // ~80-100 soldiers
@@ -17,18 +17,19 @@ private _markerArea = (_markerSize select 0) * (_markerSize select 1);
 
 // Calculate total infantry based on area and desity setting
 private _totalInfantry = ceil (_markerArea / _divisor);
-_totalInfantry = (_totalInfantry max 4) min 350; // Between 4-80 infantry
+_totalInfantry = (_totalInfantry max 4) min 350; // Between 4-350 infantry
 
 // Get nearest area name if marker text is blank
 private _locationName = markerText _marker;
-
-hint _locationName;
 
 if (_locationName == "") then {
     _locationName = [_marker] call Shared_fnc_getNearestArea;
 };
 
-systemChat format ["%1 area: %2m², spawning %3 infantry total", _locationName, floor _markerArea, _totalInfantry];
+if (isServer) then {
+    systemChat format ["%1 area: %2m², spawning %3 infantry total", _locationName, floor _markerArea, _totalInfantry];
+};
+
 
 // Spawn garrison groups (75% of infantry)
 private _garrisonCount = floor (_totalInfantry * 0.75);

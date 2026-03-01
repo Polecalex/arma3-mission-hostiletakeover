@@ -45,6 +45,6 @@ if (alive _vehicle) then {
         _group setBehaviour "SAFE";
         _group setSpeedMode "LIMITED";
         
-        systemChat format ["Stuck vehicle respawned at mission start"];
+        //systemChat format ["Stuck vehicle respawned at mission start"];
     };
 };

@@ -59,7 +59,7 @@ if (({alive _x} count units _group) == 0 || {alive _x} count units _group < 2) t
             _grp setCombatMode "RED";
         };
         
-        systemChat "Garrison group respawned";
+        //systemChat "Garrison group respawned";
         
     } else {
         // Patrol group respawn
@@ -91,6 +91,6 @@ if (({alive _x} count units _group) == 0 || {alive _x} count units _group < 2) t
         
         _newGroup setBehaviour "SAFE";
         
-        systemChat "Patrol group respawned";
+        //systemChat "Patrol group respawned";
     };
 };

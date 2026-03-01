@@ -27,7 +27,7 @@ private _parentGroup = createGroup [east, true];
 // Trigger reinforcement task failure
 [_task, "FAILED", true] call BIS_fnc_taskSetState;
 
-([_pos, "rifle"] call Shared_fnc_vehicleReinforcements) params ["_crewGroup", "_passengerGroup"];
+([_pos, "transport", "rifle"] call Shared_fnc_vehicleReinforcements) params ["_crewGroup", "_passengerGroup"];
 private _vehicle = vehicle (leader _crewGroup);
 
 _wp = _crewGroup addWaypoint [_destination, 0];

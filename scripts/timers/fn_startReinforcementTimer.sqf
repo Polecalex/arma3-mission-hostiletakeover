@@ -69,12 +69,14 @@ while {_timeElapsed < _timerDuration} do {
     };
 
     // Display count down for each player
-    private _timeLeft = _timerDuration - _timeElapsed;
-    private _minutes = floor(_timeLeft / 60);
-    private _seconds = _timeLeft mod 60;
-    private _timeString = format ["Reinforcements in %1:%2", _minutes, _seconds];
-    if (_timeElapsed mod 5 == 0) then {
-        [_timeString] remoteExec ["systemChat", 0, true];
+    if (isServer) then {
+        private _timeLeft = _timerDuration - _timeElapsed;
+        private _minutes = floor(_timeLeft / 60);
+        private _seconds = _timeLeft mod 60;
+        private _timeString = format ["Reinforcements in %1:%2", _minutes, _seconds];
+        if (_timeElapsed mod 5 == 0) then {
+            systemChat _timeString;
+        };
     };
 };
 
