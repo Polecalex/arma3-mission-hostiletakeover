@@ -74,7 +74,7 @@ private _allGroups = [];
                 _unit setUnitPos "UP"; // Stand for walls
             };
 
-            _unit disableAI "PATH";
+            // _unit disableAI "PATH";
             doStop _unit;
         } else {
             // No cover nearby, just face outwards and crouch
@@ -83,10 +83,23 @@ private _allGroups = [];
             _unit setPosATL _randomPos;
             _unit setDir (_blockadePos getDir _unit);
             _unit setUnitPos "MIDDLE";
-            _unit disableAI "PATH";
+            // _unit disableAI "PATH";
             doStop _unit;
         };
     } forEach _hunkerUnits;
+
+    [_hunkerUnits] spawn {
+        params ["_units"];
+        waitUntil {
+            sleep 2;
+            // Check if any unit in the hunkered list has moved into COMBAT behavior
+            { behaviour _x == "COMBAT" } count _units > 0
+        };
+        {
+            _x enableAI "PATH";
+            _x setUnitPos "AUTO"; // Allow them to stand/crouch/prone as needed
+        } forEach _units;
+    };
 
     // Guard waypoint - slight wandering for the rest
     if (count _wanderUnits > 0) then {
@@ -107,6 +120,20 @@ private _allGroups = [];
         private _wpCycle = _wanderGroup addWaypoint [_blockadePos, 0];
         _wpCycle setWaypointType "CYCLE";
         _wanderGroup setBehaviour "SAFE";
+
+        [_wanderGroup] spawn {
+            params ["_grp"];
+            waitUntil {
+                sleep 2;
+                behaviour (leader _grp) == "COMBAT"
+            };
+            // Clear the patrol waypoints so they focus on the threat
+            while {count waypoints _grp > 0} do {
+                deleteWaypoint ((waypoints _grp) select 0);
+            };
+            _grp setBehaviour "COMBAT";
+            _grp setSpeedMode "FULL";
+        };
         
         _allGroups pushBack _wanderGroup;
     };

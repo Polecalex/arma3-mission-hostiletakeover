@@ -4,17 +4,26 @@ params ["_player"];
 missionNamespace setVariable ["casAvailable", true, true];
 
 // Display Notification to all players within group.
-systemChat "Enabling CAS for leader";
+if (isServer) then {
+    systemChat "Enabling CAS for leader";
+};
 
 // Enable Close Air Support action for player
-[_player, "CloseAirSupport"] call BIS_fnc_addCommMenuItem;
+[blufor_leader, "CloseAirSupport"] call BIS_fnc_addCommMenuItem;
 
-private _groupUnits = units group _player;
-private _leader = owner (leader group _player);
-private _targets = _groupUnits apply {owner _x};
-_targets = (_targets arrayIntersect _targets) - [_leader]; // Remove duplicates
+private _group = group blufor_leader;
+private _groupUnits = units _group;
 
-[
-    "SupportAvailable",
-    ["<t color='#FFFFFF'>Close Air Support is now available in the area</t>"]
-] remoteExec ["BIS_fnc_showNotification", _targets, true];
+// Identify the leader to exclude them (if they already know CAS is enabled)
+private _leader = leader _group;
+private _targets = _groupUnits - [_leader];
+
+// Filter to only include players (AI don't need notifications)
+_targets = _targets select {isPlayer _x};
+
+if (count _targets > 0) then {
+    [
+        "SupportAvailable",
+        ["<t color='#FFFFFF'>Close Air Support is now available in the area</t>"]
+    ] remoteExec ["BIS_fnc_showNotification", _targets];
+};

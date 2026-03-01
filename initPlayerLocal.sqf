@@ -1,12 +1,12 @@
 [] spawn {
+    if (isServer) exitWith {};
+
     waitUntil {time > 3 && !isNull player && !isNull (findDisplay 46)};
     // systemChat "Checking Addons...";
 
     // Mod Blacklist
     private _blacklist = [
-        "vaa_arsenal","LEA","PA_arsenal","Blastcore_Sun",
-        "Blastcore_SmokeCS","WarFXPE","BlastcoreTracers",
-        "BloodSplatter","L_ES","LOSounds2Music"
+        "PA_arsenal", "DCONVirtualGarage"
     ];
 
     // List of partial mod classes when a mod has a lot of PBO's but a normalized nominclature
@@ -22,11 +22,16 @@
 
     if (count _badAddons > 0) then {
         // Print a report of detected addons to the player & End Mission
-        private _kickString = ("Bad Addons Detected: " + (_badAddons joinString " - "));
+        private _kickString = ("Bad Addons Detected: " + (_badAddons joinString ", "));
         systemChat _kickString;
         hintC _kickString;
         endMission "end2";
     } else {
         // systemChat "Addon Check Complete!";
     };
+};
+
+// Allow Zeus for host only
+if (isServer) then {
+    zeusModule setVariable ["owner", player];
 };

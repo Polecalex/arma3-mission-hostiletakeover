@@ -30,5 +30,5 @@ if (vehicle _unit != _nearestVehicle) then {
 };
 
 if (vehicle _unit != _nearestVehicle) then {
-    systemChat "Warning: No seats available, respawning at vehicle position.";
+    //systemChat "Warning: No seats available, respawning at vehicle position.";
 }

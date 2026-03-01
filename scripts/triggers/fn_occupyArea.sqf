@@ -26,7 +26,10 @@ if (_locationName == "") then {
     _locationName = [_marker] call Shared_fnc_getNearestArea;
 };
 
-systemChat format ["%1 area: %2m², spawning %3 infantry total", _locationName, floor _markerArea, _totalInfantry];
+if (isServer) then {
+    systemChat format ["%1 area: %2m², spawning %3 infantry total", _locationName, floor _markerArea, _totalInfantry];
+};
+
 
 // Spawn garrison groups (75% of infantry)
 private _garrisonCount = floor (_totalInfantry * 0.75);

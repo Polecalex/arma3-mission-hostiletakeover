@@ -33,12 +33,17 @@ private _soundName = selectRandom ["CAS_HellOnEarth", "CAS_GiveEmHell", "CAS_Inb
     missionNamespace setVariable ["casAvailable", true, true];
 
     // Notify the group that support is back online
-    private _groupUnits = units group blufor_leader;
-    private _targets = _groupUnits apply {owner _x};
-    _targets = _targets arrayIntersect _targets;
+    private _group = units group blufor_leader;
+    // Identify the leader to exclude them (if they already know CAS is enabled)
+    private _targets = _groupUnits;
 
-    [
-        "SupportAvailable",
-        ["<t color='#FFFFFF'>Close Air Support has resupplied and is available again.</t>"]
-    ] remoteExec ["BIS_fnc_showNotification", _targets];
+    // Filter to only include players (AI don't need notifications)
+    _targets = _targets select {isPlayer _x};
+
+    if (count _targets > 0) then {
+        [
+            "SupportAvailable",
+            ["<t color='#FFFFFF'>Close Air Support is now available in the area</t>"]
+        ] remoteExec ["BIS_fnc_showNotification", _targets];
+    };
 };
