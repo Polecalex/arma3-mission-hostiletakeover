@@ -91,6 +91,7 @@ class CfgFunctions {
         class Utils {
             file = "scripts\utils";
             class getNearestArea {};
+            class getPlayer {};
             class getSquadComposition {};
             class groupRespawnCheck {};
             class playLocalSound {};
