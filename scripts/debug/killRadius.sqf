@@ -1,11 +1,5 @@
 params [["_radius", 100], ["_centerPos", player]];
 
-/*
-    Author: Junie
-    Description: Kills all EAST units within a specified radius, including those in vehicles.
-    Compatible with Multiplayer.
-*/
-
 // Support passing an object (like player) instead of a raw position
 private _pos = if (typeName _centerPos == "OBJECT") then { getPosATL _centerPos } else { _centerPos };
 
