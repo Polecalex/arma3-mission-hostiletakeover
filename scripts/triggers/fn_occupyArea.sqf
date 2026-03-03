@@ -23,7 +23,7 @@ _totalInfantry = (_totalInfantry max 4) min 350; // Between 4-350 infantry
 private _locationName = markerText _marker;
 
 if (_locationName == "") then {
-    _locationName = [_marker] call Shared_fnc_getNearestArea;
+    _locationName = [_marker] call Shared_fnc_getNearestAreaName;
 };
 
 if (isServer) then {

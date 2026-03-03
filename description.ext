@@ -86,11 +86,12 @@ class CfgFunctions {
             file = "scripts\triggers";
             class enableCloseAirSupport {};
             class occupyArea {};
+            class occupyAreaDynamic {};
             class spawnReinforcements {};
         };
         class Utils {
             file = "scripts\utils";
-            class getNearestArea {};
+            class getNearestAreaName {};
             class getPlayer {};
             class getSquadComposition {};
             class groupRespawnCheck {};
