@@ -50,30 +50,60 @@ for "_x" from -_numZones to _numZones do {
             (_markerPos select 1) + (_y * _spawnZoneSize),
             0
         ];
-        
+
         // Only include zones within the marker radius
-        if (_zonePos distance2D _markerPos <= _markerRadius) then {
-            _spawnZones pushBack [_zonePos, false, 0, 0]; // [position, hasSpawned, garrisonCount, patrolCount]
+        private _distFromCenter = _zonePos distance2D _markerPos;
+        if (_distFromCenter <= _markerRadius) then {
+            // Calculate weight: center zones get higher weight
+            // Zones in center (0-50% radius) get weight 3
+            // Zones in middle ring (50-75% radius) get weight 2
+            // Zones in outer ring (75-100% radius) get weight 1
+            private _normalizedDist = _distFromCenter / _markerRadius;
+            private _weight = switch (true) do {
+                case (_normalizedDist < 0.5): {3};
+                case (_normalizedDist < 0.75): {2};
+                default {1};
+            };
+
+            _spawnZones pushBack [_zonePos, false, 0, 0, _weight]; // [position, hasSpawned, garrisonCount, patrolCount, weight]
         };
     };
 };
 
-// Distribute units across zones
+// Calculate total weight
+private _totalWeight = 0;
+{
+    _totalWeight = _totalWeight + (_x select 4);
+} forEach _spawnZones;
+
+// Distribute units across zones using weighted random selection
 private _totalGarrison = floor (_totalInfantry * 0.75);
 private _totalPatrol = _totalInfantry - _totalGarrison;
-private _zoneCount = count _spawnZones;
 
-// Assign units to random zones
+// Assign garrison units
 for "_i" from 1 to _totalGarrison do {
-    private _randomIndex = floor (random _zoneCount);
-    private _zone = _spawnZones select _randomIndex;
-    _zone set [2, (_zone select 2) + 1]; // Increment garrison count
+    private _randomWeight = random _totalWeight;
+    private _weightSum = 0;
+
+    {
+        _weightSum = _weightSum + (_x select 4);
+        if (_weightSum >= _randomWeight) exitWith {
+            _x set [2, (_x select 2) + 1]; // Increment garrison count
+        };
+    } forEach _spawnZones;
 };
 
+// Assign patrol units
 for "_i" from 1 to _totalPatrol do {
-    private _randomIndex = floor (random _zoneCount);
-    private _zone = _spawnZones select _randomIndex;
-    _zone set [3, (_zone select 3) + 1]; // Increment patrol count
+    private _randomWeight = random _totalWeight;
+    private _weightSum = 0;
+
+    {
+        _weightSum = _weightSum + (_x select 4);
+        if (_weightSum >= _randomWeight) exitWith {
+            _x set [3, (_x select 3) + 1]; // Increment patrol count
+        };
+    } forEach _spawnZones;
 };
 
 // Store zone data in namespace for persistence
@@ -82,98 +112,132 @@ missionNamespace setVariable [_marker + "_allGroups", []];
 missionNamespace setVariable [_marker + "_vehiclesSpawned", false];
 
 if (isServer) then {
-    systemChat format ["[DYNAMIC] Created %1 spawn zones, activation: %2m, min spawn: %3m", _zoneCount, _activationDistance, _minSpawnDistance];
+    systemChat format ["[DYNAMIC] Created %1 spawn zones, activation: %2m, min spawn: %3m", count _spawnZones, _activationDistance, _minSpawnDistance];
 };
 
-// Spawn blockades immediately (they're always at fixed positions)
+// Store blockade markers for dynamic spawning
 if (count _blockadeMarkers > 0) then {
-    private _blockadeGroups = [_blockadeMarkers] call Shared_fnc_blockade;
-    private _allGroups = missionNamespace getVariable [_marker + "_allGroups", []];
-    _allGroups append _blockadeGroups;
-    missionNamespace setVariable [_marker + "_allGroups", _allGroups];
+    missionNamespace setVariable [_marker + "_blockadeMarkers", _blockadeMarkers];
+    missionNamespace setVariable [_marker + "_blockadeSpawned", []];
 };
 
 // Start monitoring loop
 [_marker, _activationDistance, _minSpawnDistance, _spawnZoneSize, _vehiclePatrols, _markerArea, _markerPos, _markerRadius, _locationName] spawn {
     params ["_marker", "_activationDistance", "_minSpawnDistance", "_spawnZoneSize", "_vehiclePatrols", "_markerArea", "_markerPos", "_markerRadius", "_locationName"];
-    
+
     // Wait a moment before starting checks
     sleep 2;
-    
+
     while {true} do {
         sleep 5; // Check every 5 seconds
-        
+
         private _spawnZones = missionNamespace getVariable [_marker + "_spawnZones", []];
         private _allGroups = missionNamespace getVariable [_marker + "_allGroups", []];
-        
+
         // Get all players
         private _players = allPlayers select {alive _x};
-        
+
         // Only proceed if there are players
         if (count _players > 0) then {
             private _activatedThisCycle = 0;
-            
+
             // Check each spawn zone
             {
-                _x params ["_zonePos", "_hasSpawned", "_garrisonCount", "_patrolCount"];
+                _x params ["_zonePos", "_hasSpawned", "_garrisonCount", "_patrolCount", "_weight"];
                 private _zoneIndex = _forEachIndex;
-                
+
                 if (!_hasSpawned && (_garrisonCount > 0 || _patrolCount > 0)) then {
                     // Check if zone is within activation distance but NOT too close
                     private _shouldActivate = false;
                     private _closestDist = 9999;
-                    
+
                     {
                         private _dist = _x distance2D _zonePos;
-                        
+
                         // Zone must be within activation distance AND beyond minimum spawn distance
                         if (_dist < _activationDistance && _dist > _minSpawnDistance) then {
                             _shouldActivate = true;
                         };
-                        
+
                         if (_dist < _closestDist) then {
                             _closestDist = _dist;
                         };
                     } forEach _players;
-                    
+
                     if (_shouldActivate) then {
                         // Spawn units in this zone
                         private _tempMarker = createMarker [format ["%1_zone_%2", _marker, _zoneIndex], _zonePos];
                         _tempMarker setMarkerShape "ELLIPSE";
                         _tempMarker setMarkerSize [_spawnZoneSize / 2, _spawnZoneSize / 2];
                         _tempMarker setMarkerAlpha 0; // Invisible marker
-                        
+
                         // Spawn garrison if any
                         if (_garrisonCount > 0) then {
                             private _garrisonGroups = [_tempMarker, _zonePos, _spawnZoneSize / 2, _garrisonCount] call Shared_fnc_garrison;
                             _allGroups append _garrisonGroups;
                         };
-                        
+
                         // Spawn patrol if any
                         if (_patrolCount > 0) then {
                             private _patrolGroups = [_tempMarker, _zonePos, _spawnZoneSize / 2, _patrolCount] call Shared_fnc_patrol;
                             _allGroups append _patrolGroups;
                         };
-                        
+
                         // Mark zone as spawned
-                        _spawnZones set [_zoneIndex, [_zonePos, true, _garrisonCount, _patrolCount]];
+                        _spawnZones set [_zoneIndex, [_zonePos, true, _garrisonCount, _patrolCount, _weight]];
                         missionNamespace setVariable [_marker + "_spawnZones", _spawnZones];
                         missionNamespace setVariable [_marker + "_allGroups", _allGroups];
-                        
+
                         _activatedThisCycle = _activatedThisCycle + 1;
-                        
+
                         if (isServer) then {
                             systemChat format ["[DYNAMIC] Zone %1/%2 activated (%3m away) - spawned %4 units", _zoneIndex + 1, count _spawnZones, round _closestDist, _garrisonCount + _patrolCount];
                         };
                     };
                 };
             } forEach _spawnZones;
-            
+
             // Debug output
             if (isServer && _activatedThisCycle > 0) then {
                 systemChat format ["[DYNAMIC] Activated %1 zones this check", _activatedThisCycle];
             };
-            
+
+            // Check and spawn blockades dynamically
+            private _blockadeMarkers = missionNamespace getVariable [_marker + "_blockadeMarkers", []];
+            private _blockadeSpawned = missionNamespace getVariable [_marker + "_blockadeSpawned", []];
+
+            if (count _blockadeMarkers > 0) then {
+                {
+                    private _blockadeMarker = _x;
+
+                    // Check if this blockade hasn't been spawned yet
+                    if (!(_blockadeMarker in _blockadeSpawned)) then {
+                        private _blockadePos = getMarkerPos _blockadeMarker;
+                        private _shouldSpawnBlockade = false;
+
+                        {
+                            private _dist = _x distance2D _blockadePos;
+                            if (_dist < _activationDistance && _dist > _minSpawnDistance) exitWith {
+                                _shouldSpawnBlockade = true;
+                            };
+                        } forEach _players;
+
+                        if (_shouldSpawnBlockade) then {
+                            private _blockadeGroups = [[_blockadeMarker]] call Shared_fnc_blockade;
+                            _allGroups append _blockadeGroups;
+                            missionNamespace setVariable [_marker + "_allGroups", _allGroups];
+
+                            _blockadeSpawned pushBack _blockadeMarker;
+                            missionNamespace setVariable [_marker + "_blockadeSpawned", _blockadeSpawned];
+
+                            if (isServer) then {
+                                systemChat format ["[DYNAMIC] Blockade spawned at %1", _blockadeMarker];
+                            };
+                        };
+                    };
+                } forEach _blockadeMarkers;
+            };
+
             // Spawn vehicles once when any player enters the main area
             private _vehiclesSpawned = missionNamespace getVariable [_marker + "_vehiclesSpawned", false];
             if (!_vehiclesSpawned) then {
@@ -183,31 +247,35 @@ if (count _blockadeMarkers > 0) then {
                         _playerInArea = true;
                     };
                 } forEach _players;
-                
+
                 if (_playerInArea && _markerArea > 75000) then {
                     private _maxVehicleCount = ceil (_markerArea / 75000);
                     _maxVehicleCount = (_maxVehicleCount max 1) min 6;
                     private _finalVehicleCount = _vehiclePatrols max _maxVehicleCount;
-                    
+
                     private _vehicleGroups = [_marker, _markerPos, _markerRadius, _finalVehicleCount] call Shared_fnc_vehiclePatrol;
                     _allGroups append _vehicleGroups;
                     missionNamespace setVariable [_marker + "_allGroups", _allGroups];
                     missionNamespace setVariable [_marker + "_vehiclesSpawned", true];
-                    
+
                     if (isServer) then {
                         systemChat format ["[DYNAMIC] Vehicle patrols spawned: %1 vehicles", _finalVehicleCount];
                     };
                 };
             };
         };
-        
+
         // Check if all zones are spawned - if so, exit loop
         private _allSpawned = true;
         {
             if (!(_x select 1) && ((_x select 2) > 0 || (_x select 3) > 0)) exitWith {_allSpawned = false;};
         } forEach _spawnZones;
-        
-        if (_allSpawned) exitWith {
+
+        private _blockadeMarkers = missionNamespace getVariable [_marker + "_blockadeMarkers", []];
+        private _blockadeSpawned = missionNamespace getVariable [_marker + "_blockadeSpawned", []];
+        private _allBlockadesSpawned = (count _blockadeMarkers == count _blockadeSpawned);
+
+        if (_allSpawned && _allBlockadesSpawned) exitWith {
             if (isServer) then {
                 systemChat format ["[DYNAMIC] %1: All spawn zones activated", _locationName];
             };
