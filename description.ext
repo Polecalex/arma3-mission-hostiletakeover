@@ -43,6 +43,14 @@ respawnOnStart = 0;
 
 class CfgFunctions {
     class Shared {
+        class Dynamic {
+            file = "scripts\dynamic";
+            class areaOccupation {};
+            class buildSpawnZones {};
+            class calcUnitCount {};
+            class monitorLoop {};
+            class normaliseUnitHealth {};
+        };
         class Menu {
             file = "scripts\menu";
             class closeAirSupport {};
