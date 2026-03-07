@@ -10,10 +10,10 @@ private _fnc_addFromConfig = {
         private _model = getText(_entry >> "model");
         private _dlc = getText (_entry >> "dlc");
 
-        if (_classname find "rhsusf_" == 0 ||
-            _picture find "\rhsusf" == 0 ||
-            _model find "\rhsusf" == 0 ||
-            _dlc == "RHS_USF"
+        if (_classname find "CUP_" == 0 ||
+            _picture find "\CUP" == 0 ||
+            _model find "\CUP" == 0 ||
+            _dlc == "CUP"
         ) then {
             _whitelist pushBack _classname;
         };

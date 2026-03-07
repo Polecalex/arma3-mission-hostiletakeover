@@ -10,37 +10,31 @@
 */
 class CfgVariables {
     class CAS {
-        vehicle = "RHS_A10"; // RHS - USAF A10A
+        vehicle = "CUP_B_A10_DYN_USA"; // CUP - USArmy - A10A Thunderbolt II
         attackType = 0; // Options: 0 - Guns Run, 1 - Missiles Strike, 2 - Guns and Missiles, 3 - Bomb Strike
         cooldown = 300; // 5 minutes (300 / 60)
     };
     class Squads {
         class Infantry { // Update with Blufor and Opfor options
-            atTeam[] = {
-                "rhs_msv_emr_junior_sergeant",
-                "rhs_msv_emr_at",
-                "rhs_msv_emr_strelok_rpg_assist",
-                "rhs_msv_emr_LAT",
-                "rhs_msv_emr_rifleman"
-            };
             rifleSquad[] = {
-                "rhs_msv_emr_sergeant",
-                "rhs_msv_emr_arifleman_rpk",
-                "rhs_msv_emr_grenadier_rpg",
-                "rhs_msv_emr_marksman",
-                "rhs_msv_emr_medic",
-                "rhs_msv_emr_LAT",
-                "rhs_msv_emr_rifleman",
-                "rhs_msv_emr_machinegunner"
+                "CUP_O_RU_Soldier_SL_M_EMR_V2", // Squad Leader
+                "CUP_O_RU_Soldier_TL_M_EMR_V2", // Team Leader
+                "CUP_O_RU_Soldier_AR_M_EMR_V2", // Automatic Rifleman
+                "CUP_O_RU_Soldier_GL_EMR_V2", // Grenadier
+                "CUP_O_RU_Soldier_A_M_EMR_V2", // Ammo Bearer
+                "CUP_O_RU_Soldier_Medic_M_EMR_V2", // Medic
+                "CUP_O_RU_Soldier_LAT_M_EMR_V2", // Missile Specialist (AT)
+                "CUP_O_RU_Soldier_M_EMR_V2", // Rifleman
+                "CUP_O_RU_Soldier_MG_M_EMR_V2", // Heavy Gunner (Machine Gunner)
             };
         };
     };
     class Units {
         class Motorised {
             //standard = "O_MRAP_02_hmg_F";
-            standard = "rhs_uaz_open_MDV_01"; // RHS - MSV UAZ-3151 (Open)
+            standard = "CUP_O_UAZ_MG_RU"; // CUP - UAZ-496 (DShKM)
         };
-        transport = "rhs_kamaz5350_open_msv";
+        transport = "CUP_O_Ural_Open_RU";
     };
 };
 
