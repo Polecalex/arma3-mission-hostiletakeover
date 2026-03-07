@@ -36,6 +36,12 @@ class CfgVariables {
         };
         transport = "CUP_O_Ural_Open_RU";
     };
+    class Misc {
+        class Debug {
+            enabled = true; // Enables debug mode
+            enableSpawnZoneMarkers = true; // Creates markers to visualise spawn zones with markers
+        };
+    };
 };
 
 /* ---------- DO NOT CHANGE ---------- */
@@ -112,7 +118,7 @@ class CfgCommunicationMenu {
         enable = "missionNamespace getVariable ['casAvailable', false]"; // Condition for enabling the item
         removeAfterExpression = 0; // 1 to remove after use, 0 to keep
     };
-}
+};
 class CfgNotifications {
     class CommsRelayDestroyed {
         title = "Mission Update";

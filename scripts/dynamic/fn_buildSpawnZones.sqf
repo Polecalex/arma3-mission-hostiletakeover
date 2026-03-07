@@ -51,12 +51,16 @@ for "_x" from -_numZones to _numZones do {
 		// [position, hasSpawned, garrisonCount, patrolCount, weight]
 		_spawnZones pushBack [_zonePos, false, 0, 0, _weight];
 
-		private _debugMarker = createMarker [format ["debug_zone_%1_%2", _x, _y], _zonePos];
-		_debugMarker setMarkerShape "ELLIPSE";
-		_debugMarker setMarkerSize [_spawnZoneSize / 2, _spawnZoneSize / 2];
-		_debugMarker setMarkerColor "ColorRed";
-		_debugMarker setMarkerAlpha 0.5;
-		_debugMarker setMarkerText format ["Z %1, %2", _x, _y];
+		// Debug: visualise zones markers
+		private _enableSpawnZoneMarkers = getNumber (debugOptions >> "enableSpawnZoneMarkers") > 0;
+		if (debugMode && _enableSpawnZoneMarkers) then {
+			private _debugMarker = createMarker [format ["debug_zone_%1_%2", _x, _y], _zonePos];
+			_debugMarker setMarkerShape "ELLIPSE";
+			_debugMarker setMarkerSize [_spawnZoneSize / 2, _spawnZoneSize / 2];
+			_debugMarker setMarkerColor "ColorRed";
+			_debugMarker setMarkerAlpha 0.5;
+			_debugMarker setMarkerText format ["Z %1, %2", _x, _y];
+		};
 	};
 };
 
