@@ -41,6 +41,13 @@ class CfgVariables {
             enabled = true; // Enables debug mode
             enableSpawnZoneMarkers = true; // Creates markers to visualise spawn zones with markers
         };
+        class Blacklist {
+            mods[] = {
+                "PA_arsenal",
+                "DCONVirtualGarage"
+            };
+            prefixes[] = {};
+        };
     };
 };
 
@@ -162,12 +169,4 @@ class CfgSounds {
         sound[] = {"sounds\CAS\Inbound.ogg", 8, 1};
         titles[] = {};
     };
-};
-class CfgTaskTypes
-{
-	class ReinforcementTask
-	{
-		icon	= "\A3\UI_F_MP_Mark\Data\Tasks\Types\Attack_ca.paa";
-		icon3D	= "\A3\UI_F_MP_Mark\Data\Tasks\Types3D\Attack_ca.paa";
-	};
 };
