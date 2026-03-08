@@ -19,14 +19,14 @@ _casModule setVariable ["vehicle", _casVehicle];
 _casModule setVariable ["type", _casAttackType];
 
 // Activate the module - correct syntax
-[_casModule, [], true] spawn BIS_fnc_moduleCAS;
+[_casModule, [], true] spawn Shared_fnc_moduleCAS;
 
 systemChat ">>> CAS strike inbound!";
 
 // Cleanup
 [_casModule, _etaDuration] spawn {
-    params ["_module", "_delay"];
-    // Sleep ETA + 40 seconds to delete after attack
-    sleep _delay + 40;
-    deleteVehicle _module;
+	params ["_module", "_delay"];
+	// sleep ETA + 40 seconds to delete after attack
+	sleep _delay + 40;
+	deleteVehicle _module;
 };

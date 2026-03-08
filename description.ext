@@ -78,6 +78,7 @@ class CfgFunctions {
             file = "scripts\logic";
             class garrisonBuilding {};
             class requestCAS {};
+            class moduleCAS {};
         };
         class Respawn {
             file = "scripts\respawn";
