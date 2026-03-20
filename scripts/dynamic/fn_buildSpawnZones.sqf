@@ -10,18 +10,18 @@
 	        _totalInfantry - Total infantry units to distribute
 	
 	    Returns:
-	        Array of zone data: [position, hasSpawned, garrisonCount, patrolCount, weight]
-*/
+	        Array of zone data: [triggerPos, spawnCenter, hasSpawned, garrisonCount, patrolCount, weight]
+ */
 
 params ["_markerPos", "_markerRadius", "_spawnZoneSize", "_totalInfantry"];
 
 // ── Build zone grid ──────────────────────────────────────────────────────────
 
 private _targetZones = _totalInfantry max 1;
+private _markerArea = pi * _markerRadius * _markerRadius;
 private _spawnZoneSize = sqrt (_markerArea / _targetZones);
 private _numZones = ceil (_markerRadius / _spawnZoneSize);
 private _spawnZones = [];
-
 for "_x" from -_numZones to _numZones do {
 	for "_y" from -_numZones to _numZones do {
 		private _zonePos = [
@@ -48,8 +48,12 @@ for "_x" from -_numZones to _numZones do {
 			};
 		};
 
-		// [position, hasSpawned, garrisonCount, patrolCount, weight]
-		_spawnZones pushBack [_zonePos, false, 0, 0, _weight];
+		private _dirFromCenter = [_markerPos, _zonePos] call BIS_fnc_dirTo;
+		private _triggerPos = [_markerPos, _markerRadius + (_spawnZoneSize * 0.75), _dirFromCenter] call BIS_fnc_relPos;
+		_triggerPos set [2, 0];
+
+		// [triggerPos, spawnCenter, hasSpawned, garrisonCount, patrolCount, weight]
+		_spawnZones pushBack [_triggerPos, _zonePos, false, 0, 0, _weight];
 
 		// Debug: visualise zones markers
 		private _enableSpawnZoneMarkers = getNumber (debugOptions >> "enableSpawnZoneMarkers") > 0;
@@ -88,10 +92,10 @@ private _fnc_assignUnit = {
 };
 
 for "_i" from 1 to _totalGarrison do {
-	[2] call _fnc_assignUnit
+	[3] call _fnc_assignUnit
 };
 for "_i" from 1 to _totalPatrol do {
-	[3] call _fnc_assignUnit
+	[4] call _fnc_assignUnit
 };
 
 _spawnZones
