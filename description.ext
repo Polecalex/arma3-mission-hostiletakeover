@@ -19,7 +19,7 @@ class CfgVariables {
     };
     class Squads {
         class Infantry { // Update with Blufor and Opfor options
-            rifleSquad[] = {
+            rifle[] = {
                 "CUP_O_RU_Soldier_SL_M_EMR_V2", // Squad Leader
                 "CUP_O_RU_Soldier_TL_M_EMR_V2", // Team Leader
                 "CUP_O_RU_Soldier_AR_M_EMR_V2", // Automatic Rifleman
