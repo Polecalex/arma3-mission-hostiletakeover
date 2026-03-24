@@ -65,7 +65,7 @@ while {_timeElapsed < _timerDuration} do {
         [
             "CommsRelayDestroyed",
             ["<t color='#FFFFFF'>Communications relay has been destroyed, eliminate the remaining forces.</t>"]
-        ] remoteExecCall ["BIS_fnc_showNotification", _groupUnits, true];
+        ] remoteExecCall ["BIS_fnc_showNotification", _groupUnits];
     };
 
     // Display count down for each player

@@ -26,7 +26,7 @@ private _soundName = selectRandom ["CAS_HellOnEarth", "CAS_GiveEmHell", "CAS_Inb
 
 // Cooldown Logic (5 Minutes)
 [] spawn {
-    private _cooldown = getNumber (missionConfigFile >> "CfgVariables" >> "CAS" >> "cooldown");
+    private _cooldown = getNumber (missionConfigFile >> "CfgVariables" >> "Support" >> "CloseAirSupport" >> "cooldown");
     sleep _cooldown; // Cooldown in seconds
 
     // Re-enable CAS globally

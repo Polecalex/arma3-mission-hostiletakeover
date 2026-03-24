@@ -9,10 +9,13 @@
  * Updating CAS -> vehicle to "B_Plane_CAS_01_dynamicLoadout_F" will spawn an A164 Wipeout (CAS) as CAS support
 */
 class CfgVariables {
-    class CAS {
-        vehicle = "CUP_B_A10_DYN_USA"; // CUP - USArmy - A10A Thunderbolt II
-        attackType = 0; // Options: 0 - Guns Run, 1 - Missiles Strike, 2 - Guns and Missiles, 3 - Bomb Strike
-        cooldown = 300; // 5 minutes (300 / 60)
+    class Support {
+        class CloseAirSupport {
+            vehicle = "CUP_B_A10_DYN_USA"; // CUP - USArmy - A10A Thunderbolt II
+            attackType = 0; // Options: 0 - Guns Run, 1 - Missiles Strike, 2 - Guns and Missiles, 3 - Bomb Strike
+            cooldown = 300; // 5 minutes (300 / 60)
+        };
+        // class Artillery {};
     };
     class Squads {
         class Infantry { // Update with Blufor and Opfor options

@@ -113,9 +113,6 @@ if (_activated) then {
 	_plane addWeapon "CUP_Vacannon_GAU8_veh";
 	_plane addMagazine "CUP_1350Rnd_TE1_Red_Tracer_30mm_GAU8_M";
 
-	systemChat format ["Weapons after cleanup: %1", weapons _plane];
-	systemChat format ["Pylons after cleanup: %1", getPylonMagazines _plane];
-
 	_plane move ([_pos, _dis, _dir] call BIS_fnc_relPos);
 	_plane disableai "move";
 	_plane disableai "target";
