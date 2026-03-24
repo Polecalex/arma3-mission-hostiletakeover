@@ -30,6 +30,7 @@ private _killcount = 0;
 				_killcount = _killcount + 1;
 			};
 		} forEach (crew _entity);
+		deleteVehicle _entity;
 	};
 } forEach _entities;
 
