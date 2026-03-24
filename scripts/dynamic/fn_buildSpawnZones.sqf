@@ -72,7 +72,7 @@ for "_x" from -_numZones to _numZones do {
 
 private _totalWeight = 0;
 {
-	_totalWeight = _totalWeight + (_x select 4)
+	_totalWeight = _totalWeight + (_x select 5)
 } forEach _spawnZones;
 
 private _totalGarrison = floor (_totalInfantry * 0.75);
@@ -84,7 +84,7 @@ private _fnc_assignUnit = {
 	private _randomWeight = random _totalWeight;
 	private _weightSum = 0;
 	{
-		_weightSum = _weightSum + (_x select 4);
+		_weightSum = _weightSum + (_x select 5);
 		if (_weightSum >= _randomWeight) exitWith {
 			_x set [_slotIndex, (_x select _slotIndex) + 1];
 		};
