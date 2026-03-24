@@ -91,39 +91,31 @@ while { true } do {
 				private _closestDist = 9999;
 
 				{
-					private _dist = _x distance2D _triggerPos;
+					private _dist = _x distance2D _spawnCenter;
 					if (_dist < _activationDistance && _dist > _minSpawnDistance) then {
-						// Extra check: no player should have line of sight to the zone
-						private _hasLOS = lineIntersectsWith [
-							AGLToASL (_x modelToWorld [0, 0, 1.7]), // player eye level
-							AGLToASL (_spawnCenter vectorAdd [0, 0, 1]), // zone ground level
-							_x
-						];
-						if (count _hasLOS > 0) then {
-							_shouldActivate = true;
-						};
+						_shouldActivate = true;
 					};
 					if (_dist < _closestDist) then {
 						_closestDist = _dist
 					};
 				} forEach _players;
 
-				private _allAliveMission = {
-					alive _x
+				private _aliveEastAI = {
+					alive _x && !isPlayer _x && side _x == east
 				} count allUnits;
-				if (_allAliveMission > 40) then {
+				if (_aliveEastAI > 120) then {
 					_shouldActivate = false
 				};
 
 				if (_shouldActivate) then {
+					private _spawnPos = [_spawnCenter, _spawnZoneSize / 2, _players, _minSpawnDistance, 20] call _fnc_findHiddenSpawnPos;
+
 					private _tempMarker = createMarker [format ["%1_zone_%2", _marker, _zoneIndex], _spawnPos];
 					_tempMarker setMarkerShape "ELLIPSE";
 					_tempMarker setMarkerSize [_spawnZoneSize / 2, _spawnZoneSize / 2];
 					_tempMarker setMarkerAlpha 0;
 
 					private _newGroups = [];
-
-					private _spawnPos = [_spawnCenter, _spawnZoneSize / 2, _players, _minSpawnDistance, 20] call _fnc_findHiddenSpawnPos;
 
 					if (_garrisonCount > 0) then {
 						private _g = [_tempMarker, _spawnPos, _spawnZoneSize / 2, _garrisonCount] call Shared_fnc_garrison;
