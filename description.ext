@@ -43,6 +43,7 @@ class CfgVariables {
         class Debug {
             enabled = true; // Enables debug mode
             enableSpawnZoneMarkers = true; // Creates markers to visualise spawn zones with markers
+            runTestsOnStart = false; // Runs scripts/tests/fn_runTests.sqf at startup when true
         };
         class Blacklist {
             mods[] = {
@@ -120,6 +121,12 @@ class CfgFunctions {
             class groupRespawnCheck {};
             class playLocalSound {};
             class vehicleSpawnCheck {};
+        };
+        class Tests {
+            file = "scripts\tests";
+            class assertEqual {};
+            class assertTrue {};
+            class runTests {};
         };
     };
 };
