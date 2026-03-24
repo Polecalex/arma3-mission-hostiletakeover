@@ -1,25 +1,30 @@
-// Enables Close Air Support for group leader only
-params ["_player"];
+// Enables Close Air Support for either one player or all players in a group
+params [["_target", objNull, [objNull, grpNull]]];
 
 missionNamespace setVariable ["casAvailable", true, true];
 
-// Display Notification to all players within group.
-if (isServer) then {
-    systemChat "Enabling CAS for leader";
+private _targets = [];
+
+if (_target isEqualType objNull) then {
+    if (!isNull _target && {isPlayer _target}) then {
+        _targets pushBack _target;
+    };
 };
 
-// Enable Close Air Support action for player
-[blufor_leader, "CloseAirSupport"] call BIS_fnc_addCommMenuItem;
+if (_target isEqualType grpNull) then {
+    if (!isNull _target) then {
+        _targets = units _target select {isPlayer _x};
+    };
+};
 
-private _group = group blufor_leader;
-private _groupUnits = units _group;
+// Add CAS comm menu item for each target player on their local client.
+{
+    [_x, "CloseAirSupport"] remoteExecCall ["BIS_fnc_addCommMenuItem", _x];
+} forEach _targets;
 
-// Identify the leader to exclude them (if they already know CAS is enabled)
-private _leader = leader _group;
-private _targets = _groupUnits - [_leader];
-
-// Filter to only include players (AI don't need notifications)
-_targets = _targets select {isPlayer _x};
+if (debugMode) then {
+    systemChat format ["[Support] CloseAirSupport Enabled for %1 targets", count _targets];
+};
 
 if (count _targets > 0) then {
     [
