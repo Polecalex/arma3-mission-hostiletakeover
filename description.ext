@@ -56,6 +56,10 @@ respawnOnStart = 0;
 
 class CfgFunctions {
     class Shared {
+        class AntiCheat {
+            file = "scripts\ac";
+            class modBlacklist {};
+        }
         class Dynamic {
             file = "scripts\dynamic";
             class areaOccupation {};
