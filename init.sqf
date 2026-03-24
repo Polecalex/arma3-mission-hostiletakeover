@@ -4,9 +4,6 @@ debugMode = getNumber (debugOptions >> "enabled") > 0;
 dcon_garage_whitelist = [];
 dcon_garage_blacklist = [];
 
-missionNamespace setVariable ["activeMarkers", []];
-
-// default CAS Availability to false
 missionNamespace setVariable ["casAvailable", false, true];
 
 [] spawn Shared_fnc_respawnInit;
