@@ -33,6 +33,8 @@ params [
 private _fnc_findHiddenSpawnPos = {
 	params ["_spawnCenter", "_zoneRadius", "_players", "_minSpawnDistance", ["_tries", 20]];
 	private _fallback = _spawnCenter;
+	private _bestScore = -1;
+	private _foundHidden = false;
 
 	for "_i" from 1 to _tries do {
 		private _candidate = [_spawnCenter, random _zoneRadius, random 360] call BIS_fnc_relPos;
@@ -40,9 +42,15 @@ private _fnc_findHiddenSpawnPos = {
 
 		private _tooClose = false;
 		private _visible = false;
+		private _nearestPlayerDist = 99999;
 
 		{
-			if ((_x distance2D _candidate) < _minSpawnDistance) exitWith {
+			private _playerDist = _x distance2D _candidate;
+			if (_playerDist < _nearestPlayerDist) then {
+				_nearestPlayerDist = _playerDist;
+			};
+
+			if (_playerDist < _minSpawnDistance) exitWith {
 				_tooClose = true;
 			};
 
@@ -58,12 +66,25 @@ private _fnc_findHiddenSpawnPos = {
 			};
 		} forEach _players;
 
+		if (!_tooClose) then {
+			private _score = _nearestPlayerDist;
+			if (!_visible && _score > _bestScore) then {
+				_bestScore = _score;
+				_fallback = _candidate;
+			};
+			if (_visible && _bestScore < 0 && _score > (_bestScore max 0)) then {
+				_bestScore = _score;
+				_fallback = _candidate;
+			};
+		};
+
 		if (!_tooClose && !_visible) exitWith {
 			_fallback = _candidate;
+			_foundHidden = true;
 		};
 	};
 
-	_fallback
+	[_fallback, _foundHidden]
 };
 
 sleep 2;
@@ -83,7 +104,7 @@ while { true } do {
 		private _activatedThisCycle = 0;
 
 		{
-			_x params ["_triggerPos", "_spawnCenter", "_hasSpawned", "_garrisonCount", "_patrolCount", "_weight"];
+			_x params ["_triggerPos", "_spawnCenter", "_hasSpawned", "_garrisonCount", "_patrolCount", "_weight", ["_blockedLOSCount", 0]];
 			private _zoneIndex = _forEachIndex;
 
 			if (!_hasSpawned && (_garrisonCount > 0 || _patrolCount > 0)) then {
@@ -108,7 +129,19 @@ while { true } do {
 				};
 
 				if (_shouldActivate) then {
-					private _spawnPos = [_spawnCenter, _spawnZoneSize / 2, _players, _minSpawnDistance, 20] call _fnc_findHiddenSpawnPos;
+					private _spawnResult = [_spawnCenter, _spawnZoneSize / 2, _players, _minSpawnDistance, 20] call _fnc_findHiddenSpawnPos;
+					_spawnResult params ["_spawnPos", "_isHiddenSpawn"];
+
+					// Prefer hidden spawns, but avoid permanent starvation in open terrain.
+					if (!_isHiddenSpawn) then {
+						_blockedLOSCount = _blockedLOSCount + 1;
+
+						if (_blockedLOSCount < 6) then {
+							_spawnZones set [_zoneIndex, [_triggerPos, _spawnCenter, false, _garrisonCount, _patrolCount, _weight, _blockedLOSCount]];
+							missionNamespace setVariable [_marker + "_spawnZones", _spawnZones];
+							continue;
+						};
+					};
 
 					private _tempMarker = createMarker [format ["%1_zone_%2", _marker, _zoneIndex], _spawnPos];
 					_tempMarker setMarkerShape "ELLIPSE";
@@ -135,7 +168,7 @@ while { true } do {
 					} forEach _newGroups;
 
 					_allGroups append _newGroups;
-					_spawnZones set [_zoneIndex, [_triggerPos, _spawnCenter, true, _garrisonCount, _patrolCount, _weight]];
+					_spawnZones set [_zoneIndex, [_triggerPos, _spawnCenter, true, _garrisonCount, _patrolCount, _weight, _blockedLOSCount]];
 					missionNamespace setVariable [_marker + "_spawnZones", _spawnZones];
 					missionNamespace setVariable [_marker + "_allGroups", _allGroups];
 
