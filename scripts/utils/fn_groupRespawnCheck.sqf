@@ -5,10 +5,15 @@ sleep 30;
 
 // Check if group is dead or has too few members
 if (({alive _x} count units _group) == 0 || {alive _x} count units _group < 2) then {
+    private _targetGroupSize = _group getVariable ["dynamic_groupSize", count units _group];
+    _targetGroupSize = (_targetGroupSize max 1) min 9;
     
     private _areaPos = getMarkerPos _areaName;
-    private _newSpawnPos = [_areaPos, random _areaRadius, random 360] call BIS_fnc_relPos;
-    _newSpawnPos = [_newSpawnPos, 0, 50, 3, 0, 0.5, 0] call BIS_fnc_findSafePos;
+    private _newSpawnPosRaw = [_areaPos, random _areaRadius, random 360] call BIS_fnc_relPos;
+    private _newSpawnPos = [_newSpawnPosRaw, 0, 50, 3, 0, 0.5, 0] call BIS_fnc_findSafePos;
+    if ((_newSpawnPos distance2D _areaPos) > _areaRadius || {_newSpawnPos isEqualTo [0, 0, 0]}) then {
+        _newSpawnPos = _newSpawnPosRaw;
+    };
     
     // Delete any remaining units
     {deleteVehicle _x} forEach units _group;
@@ -16,12 +21,8 @@ if (({alive _x} count units _group) == 0 || {alive _x} count units _group < 2) t
     
     // Respawn based on type
     if (_spawnType == "garrison") then {
-        private _newGroup = createGroup [east, true];
-        private _groupSize = 3 + floor random 4;
-        
-        for "_j" from 1 to _groupSize do {
-            _newGroup createUnit ["O_Soldier_F", _newSpawnPos, [], 5, "NONE"];
-        };
+        private _newGroup = [_newSpawnPos, "rifle", _targetGroupSize] call Shared_fnc_createSquad;
+		_newGroup setVariable ["dynamic_groupSize", _targetGroupSize, true];
         
         [_newGroup] spawn {
             params ["_grp"];
@@ -63,16 +64,15 @@ if (({alive _x} count units _group) == 0 || {alive _x} count units _group < 2) t
         
     } else {
         // Patrol group respawn
-        private _newGroup = createGroup [east, true];
-        private _groupSize = 2 + floor random 4;
-        
-        for "_j" from 1 to _groupSize do {
-            _newGroup createUnit ["O_Soldier_F", _newSpawnPos, [], 3, "NONE"];
-        };
+        private _newGroup = [_newSpawnPos, "rifle", _targetGroupSize] call Shared_fnc_createSquad;
+		_newGroup setVariable ["dynamic_groupSize", _targetGroupSize, true];
         
         for "_w" from 0 to (4 + floor random 4) do {
-            private _wpPos = [_areaPos, random _areaRadius, random 360] call BIS_fnc_relPos;
-            _wpPos = [_wpPos, 0, 30, 2, 0, 0.5, 0] call BIS_fnc_findSafePos;
+            private _wpPosRaw = [_areaPos, random _areaRadius, random 360] call BIS_fnc_relPos;
+            private _wpPos = [_wpPosRaw, 0, 30, 2, 0, 0.5, 0] call BIS_fnc_findSafePos;
+            if ((_wpPos distance2D _areaPos) > _areaRadius || {_wpPos isEqualTo [0, 0, 0]}) then {
+                _wpPos = _wpPosRaw;
+            };
             
             private _wp = _newGroup addWaypoint [_wpPos, 0];
             _wp setWaypointType "MOVE";

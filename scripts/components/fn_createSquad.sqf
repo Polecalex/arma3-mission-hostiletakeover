@@ -22,17 +22,17 @@ private _squadComposition = [_type] call Shared_fnc_getSquadComposition;
 // Default -1 - Select all units from _squadComposition
 private _groupSize = count _squadComposition;
 
-if (_count == 0) then { // Random squad size between 2 and composition size (inclusive)
+if (_count == 0) then { // Random squad size between 4 and composition size (inclusive)
     private _maxGroupSize = count _squadComposition;
-    _groupSize = if (_maxGroupSize <= 2) then {
+    _groupSize = if (_maxGroupSize <= 4) then {
         _maxGroupSize
     } else {
-        2 + floor random (_maxGroupSize - 1)
+        4 + floor random (_maxGroupSize - 3)
     };
 };
 
-if (_count > 0) then { // Specify squad size with min 1 and max available
-    _groupSize = (_count max 1) min _groupSize;
+if (_count > 0) then { // Specify squad size with min 4 and max available
+    _groupSize = (_count max 4) min _groupSize;
 };
 
 // Select spawnable units from _squadComposition

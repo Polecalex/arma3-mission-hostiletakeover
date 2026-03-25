@@ -44,6 +44,8 @@ class CfgVariables {
             enabled = true; // Enables debug mode
             enableSpawnZoneMarkers = true; // Creates markers to visualise spawn zones with markers
             runTestsOnStart = false; // Runs scripts/tests/fn_runTests.sqf at startup when true
+            enableInvincibleConfiguredGroup = true; // If true and debug enabled, configured group stays invincible
+            invincibleGroupVarName = "blufor_group"; // Variable name that resolves to a group or a unit in that group
         };
         class Blacklist {
             mods[] = {
@@ -51,6 +53,29 @@ class CfgVariables {
                 "DCONVirtualGarage"
             };
             prefixes[] = {};
+        };
+    };
+    /*
+     * Dynamic Occupation Variables
+     * Each of these variables control how the dynamic occupation system functions.
+     * Adjusting these variables will change how the system behaves in terms of:
+     *   spawn location
+     *   frequency
+     *   density
+     *
+     * Each variable is measured in meters.
+     *
+     * Feel free to adjust these values to your liking,
+     * but it is recommended to leave them alone to avoid breaking the balance of the system.
+     * 
+     */
+    class Dynamic {
+        class AreaOccupation {
+            activationDistance = 80;
+            minSpawnDistance = 50;
+            minSpawnDistanceFloor = 40;
+            spawnZoneSize = 60;
+            aliveUnitCap = 120;
         };
     };
 };
@@ -165,6 +190,38 @@ class CfgNotifications {
         color[] = {0, 0.3, 0.6, 1}; // Standard BLUFOR blue
         duration = 5;
         priority = 5;
+    };
+};
+class RscTitles {
+    class HT_ActiveUnitsHUD {
+        idd = -1;
+        movingEnable = 0;
+        duration = 1e+011;
+        fadeIn = 0;
+        fadeOut = 0;
+        onLoad = "uiNamespace setVariable ['HT_ActiveUnitsHUD', _this select 0];";
+
+        class controls {
+            class ActiveUnitsText {
+                idc = 91001;
+                type = 13;
+                style = 0;
+                x = "safeZoneX + safeZoneW - 0.292";
+                y = "safeZoneY + safeZoneH - 0.095";
+                w = 0.28;
+                h = 0.07;
+                size = 0.035;
+                colorBackground[] = {0, 0, 0, 0.25};
+                text = "";
+
+                class Attributes {
+                    font = "PuristaMedium";
+                    color = "#FFFFFF";
+                    align = "right";
+                    shadow = 1;
+                };
+            };
+        };
     };
 };
 class CfgSounds {
