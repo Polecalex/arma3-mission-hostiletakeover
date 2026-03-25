@@ -22,7 +22,7 @@ private _markerArea = pi * _markerRadius * _markerRadius;
 
 // Build zones around expected group count, then place triggers semi-randomly
 // inside the area with density-dependent spacing.
-private _targetGroups = ceil (_totalInfantry / 6);
+private _targetGroups = ceil (_totalInfantry / 3);
 private _densityZoneFactor = switch (toLower _density) do {
 	case "light": {
 		0.75
@@ -69,28 +69,58 @@ private _zoneId = 0;
 
 private _attempts = 0;
 private _maxAttempts = (_desiredZones * 50) max 100;
+private _candidatePoolSize = 8;
 while { (count _spawnZones < _desiredZones) && (_attempts < _maxAttempts) } do {
 	_attempts = _attempts + 1;
 
-	private _triggerPos = [_markerPos, random _markerRadius, random 360] call BIS_fnc_relPos;
-	_triggerPos = [_triggerPos, 0, 40, 3, 0, 0.5, 0] call BIS_fnc_findSafePos;
-	if (_triggerPos distance2D _markerPos > _markerRadius) then {
-		continue;
+	private _triggerPos = [];
+	private _nearestDist = -1;
+	private _bestScore = -1;
+
+	// Build a small random candidate pool and pick the one with best spacing score.
+	for "_c" from 1 to _candidatePoolSize do {
+		private _candidateRaw = [_markerPos, random _markerRadius, random 360] call BIS_fnc_relPos;
+		private _candidate = [_candidateRaw, 0, 40, 3, 0, 0.5, 0] call BIS_fnc_findSafePos;
+		if ((_candidate distance2D _markerPos) > _markerRadius || {_candidate isEqualTo [0, 0, 0]}) then {
+			_candidate = _candidateRaw;
+		};
+		if (_candidate distance2D _markerPos > _markerRadius) then {
+			continue;
+		};
+
+		private _candidateNearest = 1e9;
+		{
+			private _dist = _candidate distance2D (_x select 0);
+			if (_dist < _candidateNearest) then {
+				_candidateNearest = _dist;
+			};
+		} forEach _spawnZones;
+
+		if ((count _spawnZones) == 0) then {
+			_candidateNearest = _minSpacing;
+		};
+
+		private _candidateScore = _candidateNearest + random 8;
+		if (_candidateNearest >= _minSpacing) then {
+			_candidateScore = _candidateScore + 20;
+		};
+
+		if (_candidateScore > _bestScore) then {
+			_bestScore = _candidateScore;
+			_triggerPos = _candidate;
+			_nearestDist = _candidateNearest;
+		};
 	};
 
-	private _nearestDist = 1e9;
-	{
-		private _dist = _triggerPos distance2D (_x select 0);
-		if (_dist < _nearestDist) then {
-			_nearestDist = _dist;
-		};
-	} forEach _spawnZones;
+	if (count _triggerPos == 0) then {
+		continue;
+	};
 
 	private _accept = false;
 	if ((count _spawnZones) == 0 || {_nearestDist >= _minSpacing}) then {
 		_accept = true;
 	} else {
-		if (_nearestDist >= _overlapSpacing && random 1 < 0.25) then {
+		if (_nearestDist >= _overlapSpacing && random 1 < 0.35) then {
 			_accept = true;
 		};
 	};
