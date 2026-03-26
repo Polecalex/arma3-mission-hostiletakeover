@@ -4217,55 +4217,58 @@ class Mission
 				class Item0
 				{
 					dataType="Trigger";
-					position[]={12324.803,10.720827,7156.3516};
+					position[]={12344.6,19.805231,7300.0234};
 					class Attributes
 					{
 						text="Ortego Occupation Trigger";
 						onActivation="[""ortego_occupation"", [" \n "   ""comms_base""," \n "   ""comms_checkpoint""," \n "   ""ortego_checkpoint_north""," \n "   ""ortego_checkpoint_station""" \n "]] call Shared_fnc_areaOccupation;" \n "" \n "[""comms_barracks""] call Shared_fnc_areaOccupation;";
-						sizeA=1053.3267;
-						sizeB=1053.3267;
+						sizeA=988.90283;
+						sizeB=988.90283;
 						sizeC=0;
 						activationBy="WEST";
 						isServerOnly=1;
 					};
 					id=623;
 					type="EmptyDetectorAreaR50";
+					atlOffset=0.28536606;
 				};
 				class Item1
 				{
 					dataType="Trigger";
-					position[]={13220.88,17.465891,8927.416};
+					position[]={13217.302,17.465891,8923.8379};
 					class Attributes
 					{
 						text="Corazol Occupation";
 						onActivation="[""corazol_occupation""] call Shared_fnc_areaOccupation;";
-						sizeA=1250;
-						sizeB=1250;
+						sizeA=909.98828;
+						sizeB=909.98828;
 						activationBy="WEST";
 						isServerOnly=1;
 					};
 					id=3227;
 					type="EmptyDetectorAreaR50";
+					atlOffset=-1.2352505;
 				};
 				class Item2
 				{
 					dataType="Trigger";
-					position[]={9953.9727,135.54823,9486.6357};
+					position[]={9710.3984,175.43875,9254.2031};
 					class Attributes
 					{
 						text="North Occupation Trigger";
 						onActivation="[""paraiso_occupation"", [" \n "    ""paraiso_checkpoint_north""," \n "    ""paraiso_checkpoint_east""," \n "    ""paraiso_checkpoint_west""" \n "]] call Shared_fnc_areaOccupation;" \n "[""paraiso_checkpoint_barracks_north""] call Shared_fnc_areaOccupation;" \n "[""paraiso_checkpoint_barracks_west""] call Shared_fnc_areaOccupation;" \n "[""paraiso_base_occupation""] call Shared_fnc_areaOccupation;" \n "[""somato_occupation""] call Shared_fnc_areaOccupation;" \n "[""chantico_occupation""] call Shared_fnc_areaOccupation;";
-						sizeA=2200;
-						sizeB=2200;
+						sizeA=1995.9929;
+						sizeB=1723.9822;
 						activationBy="WEST";
 						isServerOnly=1;
 					};
 					id=608;
 					type="EmptyDetector";
+					atlOffset=20.905548;
 				};
 			};
 			id=3230;
-			atlOffset=-189.45139;
+			atlOffset=-172.81654;
 		};
 		class Item24
 		{
@@ -6185,12 +6188,12 @@ class Mission
 		class Item28
 		{
 			dataType="Trigger";
-			position[]={10107.404,215.27477,7988.5078};
+			position[]={10204.313,216.08705,7884.5337};
 			class Attributes
 			{
 				condition="this && time > 300 && !debugMode";
-				sizeA=5000;
-				sizeB=5000;
+				sizeA=4386.5059;
+				sizeB=4386.5059;
 				activationType="NOT PRESENT";
 				activationBy="EAST";
 				isServerOnly=1;
