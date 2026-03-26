@@ -5,9 +5,9 @@ if (hasInterface) then {
 };
 
 private _tests = [
-    ["getSquadComposition", { call compile preprocessFileLineNumbers "scripts\\tests\\suites\\fn_test_getSquadComposition.sqf" }],
-    ["createSquad", { call compile preprocessFileLineNumbers "scripts\\tests\\suites\\fn_test_createSquad.sqf" }],
-    ["unitCapEnforcement", { call compile preprocessFileLineNumbers "scripts\\tests\\suites\\fn_test_unitCapEnforcement.sqf" }]
+    ["getSquadComposition", { call compile preprocessFileLineNumbers "tests\\suites\\fn_test_getSquadComposition.sqf" }],
+    ["createSquad", { call compile preprocessFileLineNumbers "tests\\suites\\fn_test_createSquad.sqf" }],
+    ["unitCapEnforcement", { call compile preprocessFileLineNumbers "tests\\suites\\fn_test_unitCapEnforcement.sqf" }]
 ];
 
 private _results = [];

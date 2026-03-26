@@ -168,7 +168,7 @@ class CfgFunctions {
             class vehicleSpawnCheck {};
         };
         class Tests {
-            file = "scripts\tests";
+            file = "tests";
             class assertEqual {};
             class assertTrue {};
             class runTests {};
