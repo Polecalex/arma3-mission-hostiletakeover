@@ -104,6 +104,19 @@ class CfgFunctions {
             class monitorLoop {};
             class normaliseUnitHealth {};
         };
+        class DynamicZone {
+            file = "scripts\dynamic\zone";
+            class canActivateZone {};
+            class findHiddenSpawnPos {};
+            class setZoneDebugMarker {};
+            class spawnZoneGroups {};
+        };
+        class DynamicBlockade {
+            file = "scripts\dynamic\blockade";
+            class getBlockadeDistances {};
+            class shouldSpawnBlockade {};
+            class updateBlockadeDebugMarkers {};
+        };
         class Menu {
             file = "scripts\menu";
             class closeAirSupport {};

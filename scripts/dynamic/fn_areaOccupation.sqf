@@ -172,53 +172,13 @@ if (count _blockadeMarkers > 0) then {
 	missionNamespace setVariable [_marker + "_blockadeSpawned", []];
 
 	if (debugMode && ((getNumber (debugOptions >> "enableBlockadeMarkers")) > 0)) then {
-		private _blockadeSpawnDistanceMultiplier = if (isNumber (_areaCfg >> "blockadeSpawnDistanceMultiplier")) then {
-			getNumber (_areaCfg >> "blockadeSpawnDistanceMultiplier")
-		} else {
-			2.8
-		};
-		private _blockadeLOSProbeDistanceMultiplier = if (isNumber (_areaCfg >> "blockadeLOSProbeDistanceMultiplier")) then {
-			getNumber (_areaCfg >> "blockadeLOSProbeDistanceMultiplier")
-		} else {
-			4.0
-		};
-		private _blockadeSpawnDistanceMin = if (isNumber (_areaCfg >> "blockadeSpawnDistanceMin")) then {
-			getNumber (_areaCfg >> "blockadeSpawnDistanceMin")
-		} else {
-			300
-		};
-		private _blockadeLOSProbeDistanceMin = if (isNumber (_areaCfg >> "blockadeLOSProbeDistanceMin")) then {
-			getNumber (_areaCfg >> "blockadeLOSProbeDistanceMin")
-		} else {
-			500
-		};
-
-		private _blockadeSpawnDistance = ((_activationDistance * _blockadeSpawnDistanceMultiplier) max (_markerRadius * 0.60)) max _blockadeSpawnDistanceMin;
-		private _blockadeLOSProbeDistance = ((_activationDistance * _blockadeLOSProbeDistanceMultiplier) max (_markerRadius * 0.90)) max _blockadeLOSProbeDistanceMin;
+		private _blockadeDistances = [_activationDistance, _markerRadius] call Shared_fnc_getBlockadeDistances;
+		_blockadeDistances params ["_blockadeSpawnDistance", "_blockadeLOSDistance"];
 
 		{
 			private _blockadeMarker = _x;
 			private _blockadePos = getMarkerPos _blockadeMarker;
-
-			private _spawnDebugName = format ["debug_blockade_spawn_%1", _blockadeMarker];
-			private _losDebugName = format ["debug_blockade_los_%1", _blockadeMarker];
-
-			createMarker [_spawnDebugName, _blockadePos];
-			createMarker [_losDebugName, _blockadePos];
-
-			_spawnDebugName setMarkerPos _blockadePos;
-			_spawnDebugName setMarkerShape "ELLIPSE";
-			_spawnDebugName setMarkerBrush "SolidBorder";
-			_spawnDebugName setMarkerSize [_blockadeSpawnDistance, _blockadeSpawnDistance];
-			_spawnDebugName setMarkerColor "ColorOrange";
-			_spawnDebugName setMarkerAlpha 0.35;
-
-			_losDebugName setMarkerPos _blockadePos;
-			_losDebugName setMarkerShape "ELLIPSE";
-			_losDebugName setMarkerBrush "Border";
-			_losDebugName setMarkerSize [_blockadeLOSProbeDistance, _blockadeLOSProbeDistance];
-			_losDebugName setMarkerColor "ColorYellow";
-			_losDebugName setMarkerAlpha 0.1;
+			[_blockadeMarker, _blockadePos, _blockadeSpawnDistance, _blockadeLOSDistance, false] call Shared_fnc_updateBlockadeDebugMarkers;
 		} forEach _blockadeMarkers;
 	};
 };

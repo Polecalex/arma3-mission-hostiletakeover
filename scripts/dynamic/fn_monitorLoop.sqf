@@ -48,89 +48,6 @@ private _spawnAreaMax = 90;
 private _loopIntervalSec = 3;
 private _startupDelaySec = 1;
 
-private _areaCfg = missionConfigFile >> "CfgVariables" >> "Dynamic" >> "AreaOccupation";
-private _blockadeSpawnDistanceMultiplier = if (isNumber (_areaCfg >> "blockadeSpawnDistanceMultiplier")) then {
-	getNumber (_areaCfg >> "blockadeSpawnDistanceMultiplier")
-} else {
-	1.6
-};
-private _blockadeLOSProbeDistanceMultiplier = if (isNumber (_areaCfg >> "blockadeLOSProbeDistanceMultiplier")) then {
-	getNumber (_areaCfg >> "blockadeLOSProbeDistanceMultiplier")
-} else {
-	2.2
-};
-private _blockadeSpawnDistanceMin = if (isNumber (_areaCfg >> "blockadeSpawnDistanceMin")) then {
-	getNumber (_areaCfg >> "blockadeSpawnDistanceMin")
-} else {
-	220
-};
-private _blockadeLOSProbeDistanceMin = if (isNumber (_areaCfg >> "blockadeLOSProbeDistanceMin")) then {
-	getNumber (_areaCfg >> "blockadeLOSProbeDistanceMin")
-} else {
-	350
-};
-
-private _fnc_findHiddenSpawnPos = {
-	params ["_spawnCenter", "_zoneRadius", "_players", "_minSpawnDistance", ["_tries", 20]];
-	private _fallback = _spawnCenter;
-	private _bestScore = -1;
-	private _foundHidden = false;
-
-	for "_i" from 1 to _tries do {
-		private _candidateRaw = [_spawnCenter, random _zoneRadius, random 360] call BIS_fnc_relPos;
-		private _candidate = [_candidateRaw, 0, 40, 3, 0, 0.5, 0] call BIS_fnc_findSafePos;
-
-		// Keep candidate local to the spawn zone even when findSafePos drifts.
-		if ((_candidate distance2D _spawnCenter) > _zoneRadius || {_candidate isEqualTo [0, 0, 0]}) then {
-			_candidate = _candidateRaw;
-		};
-
-		private _tooClose = false;
-		private _visible = false;
-		private _nearestPlayerDist = 99999;
-
-		{
-			private _playerDist = _x distance2D _candidate;
-			if (_playerDist < _nearestPlayerDist) then {
-				_nearestPlayerDist = _playerDist;
-			};
-
-			if (_playerDist < _minSpawnDistance) exitWith {
-				_tooClose = true;
-			};
-
-			private _startASL = AGLToASL (_x modelToWorld [0, 0, 1.7]);
-			private _endASL = AGLToASL (_candidate vectorAdd [0, 0, 1]);
-			private _terrainBlocked = terrainIntersectASL [_startASL, _endASL];
-			private _hits = lineIntersectsWith [_startASL, _endASL, _x];
-
-			// Visible only if neither terrain nor objects block LOS.
-			if (!_terrainBlocked && (count _hits) == 0) exitWith {
-				_visible = true;
-			};
-		} forEach _players;
-
-		if (!_tooClose) then {
-			private _score = _nearestPlayerDist;
-			if (!_visible && _score > _bestScore) then {
-				_bestScore = _score;
-				_fallback = _candidate;
-			};
-			if (_visible && _bestScore < 0 && _score > (_bestScore max 0)) then {
-				_bestScore = _score;
-				_fallback = _candidate;
-			};
-		};
-
-		if (!_tooClose && !_visible) exitWith {
-			_fallback = _candidate;
-			_foundHidden = true;
-		};
-	};
-
-	[_fallback, _foundHidden]
-};
-
 sleep _startupDelaySec;
 
 while { true } do {
@@ -173,118 +90,74 @@ while { true } do {
 					continue;
 				};
 
-				private _shouldActivate = false;
-				private _closestDist = 9999;
+				private _activationResult = [
+					_triggerPos,
+					_players,
+					_activationDistance,
+					_minSpawnDistance,
+					_aliveUnitCap,
+					_garrisonCount,
+					_patrolCount
+				] call Shared_fnc_canActivateZone;
+				_activationResult params ["_shouldActivate", "_closestDist"];
 
-				{
-					private _dist = _x distance2D _triggerPos;
-					if (_dist < _activationDistance && _dist > _minSpawnDistance) then {
-						_shouldActivate = true;
-					};
-					if (_dist < _closestDist) then {
-						_closestDist = _dist
-					};
-				} forEach _players;
+				if (_shouldActivate) then {
+					sleep (0.15 + random 0.25);
 
-				private _aliveEastAI = {
-					alive _x && !isPlayer _x && side _x == east
-				} count allUnits;
-			
-			// Check if spawning this zone would exceed the unit cap.
-			// The zone retains its original garrison/patrol counts and will retry on next cycle
-			// if capacity is insufficient, ensuring full squads only (no partial spawns).
-			private _totalRequestedUnits = _garrisonCount + _patrolCount;
-			private _wouldExceedCap = (_aliveEastAI + _totalRequestedUnits) > _aliveUnitCap;
-			
-			if (_aliveEastAI >= _aliveUnitCap || _wouldExceedCap) then {
-				_shouldActivate = false
-			};
-
-			if (_shouldActivate) then {
-				sleep (0.15 + random 0.25);
-
-				private _spawnResult = [_spawnCenter, _hiddenSearchRadiusBase, _players, _minSpawnDistance, _baseTries] call _fnc_findHiddenSpawnPos;
-				_spawnResult params ["_spawnPos", "_isHiddenSpawn"];
-
-				// Second pass expands the search radius slightly for difficult terrain,
-				// still requiring hidden LOS.
-				if (!_isHiddenSpawn) then {
-					_spawnResult = [_spawnCenter, _hiddenSearchRadiusExpanded, _players, _minSpawnDistance, _expandedTries] call _fnc_findHiddenSpawnPos;
+					private _spawnResult = [_spawnCenter, _hiddenSearchRadiusBase, _players, _minSpawnDistance, _baseTries] call Shared_fnc_findHiddenSpawnPos;
 					_spawnResult params ["_spawnPos", "_isHiddenSpawn"];
-				};
 
-				// Never force a visible spawn; relocate spawn center and retry on next loop.
-				if (!_isHiddenSpawn) then {
-					_blockedLOSCount = _blockedLOSCount + 1;
-
-					// Reroll spawn center to a new random position within the marker area.
-					private _newCenter = [_markerPos, random _markerRadius, random 360] call BIS_fnc_relPos;
-					if (_newCenter distance2D _markerPos <= _markerRadius) then {
-						_spawnCenter = _newCenter;
+					// Second pass expands the search radius slightly for difficult terrain,
+					// still requiring hidden LOS.
+					if (!_isHiddenSpawn) then {
+						_spawnResult = [_spawnCenter, _hiddenSearchRadiusExpanded, _players, _minSpawnDistance, _expandedTries] call Shared_fnc_findHiddenSpawnPos;
+						_spawnResult params ["_spawnPos", "_isHiddenSpawn"];
 					};
 
-					_spawnZones set [_zoneIndex, [_triggerPos, _spawnCenter, false, _garrisonCount, _patrolCount, _weight, _debugMarkerName, _blockedLOSCount]];
+					// Never force a visible spawn; relocate spawn center and retry on next loop.
+					if (!_isHiddenSpawn) then {
+						_blockedLOSCount = _blockedLOSCount + 1;
+
+						// Reroll spawn center to a new random position within the marker area.
+						private _newCenter = [_markerPos, random _markerRadius, random 360] call BIS_fnc_relPos;
+						if (_newCenter distance2D _markerPos <= _markerRadius) then {
+							_spawnCenter = _newCenter;
+						};
+
+						_spawnZones set [_zoneIndex, [_triggerPos, _spawnCenter, false, _garrisonCount, _patrolCount, _weight, _debugMarkerName, _blockedLOSCount]];
+						missionNamespace setVariable [_marker + "_spawnZones", _spawnZones];
+						[_debugMarkerName, _spawnCenter, "ColorYellow", 0.5] call Shared_fnc_setZoneDebugMarker;
+						continue;
+					};
+
+					private _tempMarker = createMarker [format ["%1_zone_%2", _marker, _zoneIndex], _spawnPos];
+					_tempMarker setMarkerShape "ELLIPSE";
+					_tempMarker setMarkerSize [_spawnAreaRadius, _spawnAreaRadius];
+					_tempMarker setMarkerAlpha 0;
+
+					private _newGroups = [_tempMarker, _spawnPos, _spawnAreaRadius, _garrisonCount, _patrolCount, _density] call Shared_fnc_spawnZoneGroups;
+
+					_allGroups append _newGroups;
+					_spawnZones set [_zoneIndex, [_triggerPos, _spawnCenter, true, _garrisonCount, _patrolCount, _weight, _debugMarkerName, _blockedLOSCount]];
 					missionNamespace setVariable [_marker + "_spawnZones", _spawnZones];
+					missionNamespace setVariable [_marker + "_allGroups", _allGroups];
+					[_debugMarkerName, _spawnCenter, "ColorGreen", 0.8] call Shared_fnc_setZoneDebugMarker;
 
-					if (debugMode && _debugMarkerName != "") then {
-						_debugMarkerName setMarkerPos _spawnCenter;
-						_debugMarkerName setMarkerColor "ColorYellow";
-						_debugMarkerName setMarkerAlpha 0.5;
+					_activatedThisCycle = _activatedThisCycle + 1;
+					_activatedCenters pushBack _triggerPos;
+
+					if (isServer) then {
+						systemChat format [
+							"[DYNAMIC] Zone %1/%2 activated (%3m away) - spawned %4 groups with %5 garrison and %6 patrol | %7 total groups now active",
+							_zoneIndex + 1, count _spawnZones,
+							round _closestDist,
+							_garrisonCount + _patrolCount,
+							_garrisonCount, _patrolCount,
+							count _allGroups
+						];
 					};
-					continue;
-				};
-
-				private _tempMarker = createMarker [format ["%1_zone_%2", _marker, _zoneIndex], _spawnPos];
-				_tempMarker setMarkerShape "ELLIPSE";
-				_tempMarker setMarkerSize [_spawnAreaRadius, _spawnAreaRadius];
-				_tempMarker setMarkerAlpha 0;
-
-				private _newGroups = [];
-
-				if (_garrisonCount > 0) then {
-					private _g = [_tempMarker, _spawnPos, _spawnAreaRadius, _garrisonCount] call Shared_fnc_garrison;
-					_newGroups append _g;
-				};
-
-				if (_patrolCount > 0) then {
-					private _g = [_tempMarker, _spawnPos, _spawnAreaRadius, _patrolCount] call Shared_fnc_patrol;
-					_newGroups append _g;
-				};
-
-				// Normalise health on all spawned units
-				{
-					{
-						[_x] call Shared_fnc_normaliseUnitHealth;
-						_x setVariable ["dynamic_isInfantryManaged", true, true];
-						_x setVariable ["dynamic_density", toLower _density, true];
-					} forEach units _x
-				} forEach _newGroups;
-
-				_allGroups append _newGroups;
-				_spawnZones set [_zoneIndex, [_triggerPos, _spawnCenter, true, _garrisonCount, _patrolCount, _weight, _debugMarkerName, _blockedLOSCount]];
-				missionNamespace setVariable [_marker + "_spawnZones", _spawnZones];
-				missionNamespace setVariable [_marker + "_allGroups", _allGroups];
-
-				if (debugMode && _debugMarkerName != "") then {
-					_debugMarkerName setMarkerColor "ColorGreen";
-					_debugMarkerName setMarkerAlpha 0.8;
-				};
-
-				_activatedThisCycle = _activatedThisCycle + 1;
-				_activatedCenters pushBack _triggerPos;
-
-				if (isServer) then {
-					systemChat format [
-						"[DYNAMIC] Zone %1/%2 activated (%3m away) - spawned %4 groups with %5 garrison and %6 patrol | %7 total groups now active",
-						_zoneIndex + 1, count _spawnZones,
-						round _closestDist,
-						_garrisonCount + _patrolCount,
-						_garrisonCount, _patrolCount,
-						count _allGroups
-					];
 				};
 			};
-		};
 		} forEach _spawnZones;
 
 		if (isServer && _activatedThisCycle > 0) then {
@@ -298,64 +171,18 @@ while { true } do {
 
 		if (count _blockadeMarkers > 0) then {
 			private _enableBlockadeMarkers = getNumber (debugOptions >> "enableBlockadeMarkers") > 0;
+			private _blockadeDistances = [_activationDistance, _markerRadius] call Shared_fnc_getBlockadeDistances;
+			_blockadeDistances params ["_blockadeSpawnDistance", "_blockadeLOSDistance"];
 			{
 				private _blockadeMarker = _x;
 				private _blockadePos = getMarkerPos _blockadeMarker;
-				private _blockadeSpawnDistance = ((_activationDistance * _blockadeSpawnDistanceMultiplier) max (_markerRadius * 0.60)) max _blockadeSpawnDistanceMin;
-				private _blockadeLOSProbeDistance = ((_activationDistance * _blockadeLOSProbeDistanceMultiplier) max (_markerRadius * 0.90)) max _blockadeLOSProbeDistanceMin;
 
 				if (debugMode && _enableBlockadeMarkers) then {
-					private _spawnDebugName = format ["debug_blockade_spawn_%1", _blockadeMarker];
-					private _losDebugName = format ["debug_blockade_los_%1", _blockadeMarker];
-
-					private _spawnMarker = createMarker [_spawnDebugName, _blockadePos];
-					private _losMarker = createMarker [_losDebugName, _blockadePos];
-
-					_spawnDebugName setMarkerPos _blockadePos;
-					_spawnDebugName setMarkerSize [_blockadeSpawnDistance, _blockadeSpawnDistance];
-					_spawnDebugName setMarkerShape "ELLIPSE";
-					_spawnDebugName setMarkerBrush "SolidBorder";
-
-					_losDebugName setMarkerPos _blockadePos;
-					_losDebugName setMarkerSize [_blockadeLOSProbeDistance, _blockadeLOSProbeDistance];
-					_losDebugName setMarkerShape "ELLIPSE";
-					_losDebugName setMarkerBrush "Border";
-
-					if (_blockadeMarker in _blockadeSpawned) then {
-						_spawnDebugName setMarkerColor "ColorGreen";
-						_spawnDebugName setMarkerAlpha 0.45;
-						_losDebugName setMarkerColor "ColorGreen";
-						_losDebugName setMarkerAlpha 0.12;
-					} else {
-						_spawnDebugName setMarkerColor "ColorOrange";
-						_spawnDebugName setMarkerAlpha 0.35;
-						_losDebugName setMarkerColor "ColorYellow";
-						_losDebugName setMarkerAlpha 0.1;
-					};
+					[_blockadeMarker, _blockadePos, _blockadeSpawnDistance, _blockadeLOSDistance, (_blockadeMarker in _blockadeSpawned)] call Shared_fnc_updateBlockadeDebugMarkers;
 				};
 
 				if (!(_blockadeMarker in _blockadeSpawned)) then {
-					private _shouldSpawn = false;
-
-					{
-						private _dist = _x distance2D _blockadePos;
-
-						// Spawn when players are near enough OR when they can already see the blockade area.
-						if (_dist <= _blockadeSpawnDistance) exitWith {
-							_shouldSpawn = true;
-						};
-
-						if (_dist <= _blockadeLOSProbeDistance) then {
-							private _startASL = AGLToASL (_x modelToWorld [0, 0, 1.7]);
-							private _endASL = AGLToASL (_blockadePos vectorAdd [0, 0, 1.2]);
-							private _terrainBlocked = terrainIntersectASL [_startASL, _endASL];
-							private _hits = lineIntersectsWith [_startASL, _endASL, _x];
-
-							if (!_terrainBlocked && (count _hits) == 0) exitWith {
-								_shouldSpawn = true;
-							};
-						};
-					} forEach _players;
+					private _shouldSpawn = [_blockadePos, _players, _blockadeSpawnDistance, _blockadeLOSDistance] call Shared_fnc_shouldSpawnBlockade;
 
 					if (_shouldSpawn) then {
 						private _bGroups = [[_blockadeMarker]] call Shared_fnc_blockade;
