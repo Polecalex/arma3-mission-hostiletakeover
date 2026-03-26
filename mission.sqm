@@ -5,7 +5,7 @@ class EditorData
 	angleGridStep=0.2617994;
 	scaleGridStep=1;
 	autoGroupingDist=10;
-	toggles=513;
+	toggles=1537;
 	mods[]=
 	{
 		"3denEnhanced"
@@ -20,14 +20,14 @@ class EditorData
 	};
 	class LayerIndexProvider
 	{
-		nextID=2256;
+		nextID=2336;
 	};
 	class Camera
 	{
-		pos[]={11842.909,57.068501,6282.7583};
-		dir[]={0.59116942,-0.57200384,0.56862158};
-		up[]={0.41225329,0.82025087,0.3965295};
-		aside[]={0.69322872,0,-0.72071767};
+		pos[]={13700.681,43.405647,8938.8711};
+		dir[]={0.89493495,-0.39308545,0.21112865};
+		up[]={0.38258308,0.91950196,0.090257123};
+		aside[]={0.22961196,7.4505806e-09,-0.97328228};
 	};
 };
 binarizationWanted=0;
@@ -83,14 +83,13 @@ addons[]=
 	"CUP_Weapons_M249",
 	"CUP_Weapons_Mk48",
 	"CUP_Weapons_Javelin",
-	"CUP_AirVehicles_UH60",
-	"A3_Soft_F_MRAP_01"
+	"CUP_AirVehicles_UH60"
 };
 class AddonsMetaData
 {
 	class List
 	{
-		items=35;
+		items=34;
 		class Item0
 		{
 			className="A3_Modules_F";
@@ -288,13 +287,6 @@ class AddonsMetaData
 		{
 			className="CUP_AirVehicles_UH60";
 			name="CUP_AirVehicles_UH60";
-		};
-		class Item34
-		{
-			className="A3_Soft_F";
-			name="Arma 3 Alpha - Unarmored Land Vehicles";
-			author="Bohemia Interactive";
-			url="https://www.arma3.com";
 		};
 	};
 };
@@ -1080,7 +1072,7 @@ class Mission
 	};
 	class Entities
 	{
-		items=33;
+		items=32;
 		class Item0
 		{
 			dataType="Layer";
@@ -4219,20 +4211,20 @@ class Mission
 		{
 			dataType="Layer";
 			name="Occupation Triggers";
-			state=3;
 			class Entities
 			{
 				items=3;
 				class Item0
 				{
 					dataType="Trigger";
-					position[]={12116.646,23.263359,7271.9351};
+					position[]={12324.803,10.720827,7156.3516};
 					class Attributes
 					{
 						text="Ortego Occupation Trigger";
 						onActivation="[""ortego_occupation"", [" \n "   ""comms_base""," \n "   ""comms_checkpoint""," \n "   ""ortego_checkpoint_north""," \n "   ""ortego_checkpoint_station""" \n "]] call Shared_fnc_areaOccupation;" \n "" \n "[""comms_barracks""] call Shared_fnc_areaOccupation;";
-						sizeA=1750;
-						sizeB=1750;
+						sizeA=1053.3267;
+						sizeB=1053.3267;
+						sizeC=0;
 						activationBy="WEST";
 						isServerOnly=1;
 					};
@@ -4262,7 +4254,7 @@ class Mission
 					class Attributes
 					{
 						text="North Occupation Trigger";
-						onActivation="[""paraiso_occupation"", [" \n "    ""paraiso_checkpoint_north""," \n "    ""paraiso_checkpoint_east""," \n "    ""paraiso_checkpoint_west""" \n "]] call Shared_fnc_occupyArea;" \n "[""paraiso_checkpoint_barracks_north""] call Shared_fnc_areaOccupation;" \n "[""paraiso_checkpoint_barracks_west""] call Shared_fnc_areaOccupation;" \n "[""paraiso_base_occupation""] call Shared_fnc_areaOccupation;" \n "[""somato_occupation""] call Shared_fnc_areaOccupation;";
+						onActivation="[""paraiso_occupation"", [" \n "    ""paraiso_checkpoint_north""," \n "    ""paraiso_checkpoint_east""," \n "    ""paraiso_checkpoint_west""" \n "]] call Shared_fnc_areaOccupation;" \n "[""paraiso_checkpoint_barracks_north""] call Shared_fnc_areaOccupation;" \n "[""paraiso_checkpoint_barracks_west""] call Shared_fnc_areaOccupation;" \n "[""paraiso_base_occupation""] call Shared_fnc_areaOccupation;" \n "[""somato_occupation""] call Shared_fnc_areaOccupation;" \n "[""chantico_occupation""] call Shared_fnc_areaOccupation;";
 						sizeA=2200;
 						sizeB=2200;
 						activationBy="WEST";
@@ -4273,7 +4265,7 @@ class Mission
 				};
 			};
 			id=3230;
-			atlOffset=-174.28439;
+			atlOffset=-189.45139;
 		};
 		class Item24
 		{
@@ -6272,7 +6264,7 @@ class Mission
 					dataType="Object";
 					class PositionInfo
 					{
-						position[]={11876.955,18.285963,6320.9517};
+						position[]={10464.841,125.5659,9370.6318};
 						angles[]={0,0.94799304,0};
 					};
 					side="West";
@@ -6525,7 +6517,7 @@ class Mission
 					dataType="Object";
 					class PositionInfo
 					{
-						position[]={2989.1523,14.067554,2130.9275};
+						position[]={10468.844,125.30362,9372.4717};
 						angles[]={0,4.2584639,0};
 					};
 					side="West";
@@ -6643,7 +6635,6 @@ class Mission
 					};
 					id=3288;
 					type="CUP_B_US_SpecOps_AR";
-					atlOffset=2.8610229e-06;
 					class CustomAttributes
 					{
 						class Attribute0
@@ -6693,7 +6684,7 @@ class Mission
 					dataType="Object";
 					class PositionInfo
 					{
-						position[]={2988.1641,14.108352,2126.7395};
+						position[]={10467.855,125.89253,9368.2842};
 						angles[]={0,5.2653618,0};
 					};
 					side="West";
@@ -6829,7 +6820,6 @@ class Mission
 					};
 					id=3289;
 					type="CUP_B_US_SpecOps_Medic";
-					atlOffset=2.8610229e-06;
 					class CustomAttributes
 					{
 						class Attribute0
@@ -6879,7 +6869,7 @@ class Mission
 					dataType="Object";
 					class PositionInfo
 					{
-						position[]={2990.542,13.969128,2128.4563};
+						position[]={10470.233,125.67175,9370.001};
 						angles[]={0,4.7489362,0};
 					};
 					side="West";
@@ -6996,7 +6986,6 @@ class Mission
 					};
 					id=3290;
 					type="CUP_B_US_SpecOps_MG";
-					atlOffset=2.8610229e-06;
 					class CustomAttributes
 					{
 						class Attribute0
@@ -7046,7 +7035,7 @@ class Mission
 					dataType="Object";
 					class PositionInfo
 					{
-						position[]={2982.7646,14.448204,2132.6111};
+						position[]={10462.456,124.97348,9374.1553};
 						angles[]={0,2.6666536,0};
 					};
 					side="West";
@@ -7200,7 +7189,6 @@ class Mission
 					};
 					id=3296;
 					type="CUP_B_US_Soldier_GL_OEFCP";
-					atlOffset=2.8610229e-06;
 					class CustomAttributes
 					{
 						class Attribute0
@@ -7250,7 +7238,7 @@ class Mission
 					dataType="Object";
 					class PositionInfo
 					{
-						position[]={2985.5381,14.230795,2133.5261};
+						position[]={10465.229,124.81967,9375.0703};
 						angles[]={0,3.3478205,0};
 					};
 					side="West";
@@ -7412,7 +7400,7 @@ class Mission
 					};
 					id=3297;
 					type="CUP_B_US_Soldier_HAT_OEFCP";
-					atlOffset=2.8610229e-06;
+					atlOffset=-7.6293945e-06;
 					class CustomAttributes
 					{
 						class Attribute0
@@ -7462,7 +7450,7 @@ class Mission
 					dataType="Object";
 					class PositionInfo
 					{
-						position[]={2987.9775,14.094518,2133.1365};
+						position[]={10467.669,124.98625,9374.6807};
 						angles[]={0,3.7247071,0};
 					};
 					side="West";
@@ -7569,7 +7557,6 @@ class Mission
 					};
 					id=3298;
 					type="CUP_B_US_Soldier_OEFCP";
-					atlOffset=2.8610229e-06;
 					class CustomAttributes
 					{
 						class Attribute0
@@ -7617,6 +7604,7 @@ class Mission
 			};
 			class Attributes
 			{
+				name="blufor_group";
 			};
 			id=3286;
 		};
@@ -7855,23 +7843,6 @@ class Mission
 				};
 				nAttributes=1;
 			};
-		};
-		class Item32
-		{
-			dataType="Object";
-			class PositionInfo
-			{
-				position[]={11886.104,21.17375,6323.0728};
-				angles[]={6.2651882,0.75810254,0.029240895};
-			};
-			side="Empty";
-			flags=4;
-			class Attributes
-			{
-			};
-			id=3392;
-			type="B_MRAP_01_hmg_F";
-			atlOffset=7.6293945e-06;
 		};
 	};
 	class Connections

@@ -47,12 +47,16 @@ Typical usage:
 Defaults come from `description.ext`:
 
 - `CfgVariables >> Dynamic >> AreaOccupation`
-- Config-exposed values are intentionally minimal:
+- Config-exposed values:
   - `activationDistance`
   - `minSpawnDistance`
   - `minSpawnDistanceFloor`
   - `spawnZoneSize`
   - `aliveUnitCap`
+  - `blockadeSpawnDistanceMultiplier`
+  - `blockadeLOSProbeDistanceMultiplier`
+  - `blockadeSpawnDistanceMin`
+  - `blockadeLOSProbeDistanceMin`
 - Advanced values are script defaults in `fn_areaOccupation` (not config-exposed):
   - max zones per cycle by density: `1 / 3 / 4 / 5`
   - min zone spacing formula: `(_spawnZoneSize * 1.25) max 120`
@@ -93,7 +97,7 @@ Function: `Shared_fnc_buildSpawnZones` in `scripts/dynamic/fn_buildSpawnZones.sq
 Current target-group seed:
 
 ```sqf
-private _targetGroups = ceil (_totalInfantry / 6);
+private _targetGroups = ceil (_totalInfantry / 3);
 ```
 
 Then density factor is applied (`0.75/1.0/1.25/1.5`) and clamped to `4..36` zones.
@@ -102,6 +106,7 @@ Then density factor is applied (`0.75/1.0/1.25/1.5`) and clamped to `4..36` zone
 
 - Trigger positions are random inside marker radius.
 - Spacing is density-dependent and based on `activationDistance`.
+- Placement uses a random candidate pool per zone (`_candidatePoolSize = 8`) and picks the best spacing score.
 - Small overlap is allowed (controlled by `_overlapSpacing` + acceptance chance).
 
 Each zone row currently looks like:
@@ -164,6 +169,10 @@ Runs every 5 seconds and:
    - tags units for HUD/accounting
    - marks zone as spawned
    - debug marker turns green
+7. Blockade spawning uses independent range checks from each blockade marker:
+  - near-distance ring (`blockadeSpawnDistance*`)
+  - LOS probe ring (`blockadeLOSProbeDistance*`)
+  - both include activation-distance multiplier, marker-radius floor, and absolute minimum distance
 
 ## 6) Squad Size Selection and Persistence
 
@@ -264,6 +273,17 @@ If spawns feel too visible:
 
 With debug markers enabled:
 
-- Red: zone exists, not yet spawned.
-- Yellow: hidden spawn failed this cycle; zone center rerolled for retry.
-- Green: zone spawned successfully.
+- Infantry zone markers (`enableSpawnZoneMarkers`):
+  - `ColorRed` (alpha `0.5`): zone exists, not yet spawned
+  - `ColorYellow`: hidden spawn failed this cycle; zone center rerolled for retry
+  - `ColorGreen`: zone spawned successfully
+- Blockade markers (`enableBlockadeMarkers`):
+  - Orange solid-border ring: blockade near-distance spawn ring
+  - Yellow border ring: blockade LOS probe ring
+  - Green rings: blockade already spawned
+
+Marker differences:
+
+- Infantry zone marker = where dynamic infantry zone activation is checked.
+- Blockade near-distance ring = distance condition that can trigger blockade spawn.
+- Blockade LOS ring = longer-range visibility check that can trigger earlier blockade spawn when players can see the area.

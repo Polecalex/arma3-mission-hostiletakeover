@@ -43,7 +43,8 @@ class CfgVariables {
         class Debug {
             enabled = true; // Enables debug mode
             enableSpawnZoneMarkers = true; // Creates markers to visualise spawn zones with markers
-            runTestsOnStart = false; // Runs scripts/tests/fn_runTests.sqf at startup when true
+            enableBlockadeMarkers = true; // Creates markers to visualise blockade trigger ranges
+            runTestsOnStart = true; // Runs scripts/tests/fn_runTests.sqf at startup when true
             enableInvincibleConfiguredGroup = true; // If true and debug enabled, configured group stays invincible
             invincibleGroupVarName = "blufor_group"; // Variable name that resolves to a group or a unit in that group
         };
@@ -76,6 +77,12 @@ class CfgVariables {
             minSpawnDistanceFloor = 40;
             spawnZoneSize = 60;
             aliveUnitCap = 120;
+
+            // Blockades can be seen from farther out, so these multipliers allow earlier spawn.
+            blockadeSpawnDistanceMultiplier = 3.1;
+            blockadeLOSProbeDistanceMultiplier = 4.5;
+            blockadeSpawnDistanceMin = 340;
+            blockadeLOSProbeDistanceMin = 580;
         };
     };
 };

@@ -66,6 +66,7 @@ private _overlapSpacing = _minSpacing * 0.75;
 
 private _spawnZones = [];
 private _zoneId = 0;
+private _markerKey = format ["%1_%2", round (_markerPos select 0), round (_markerPos select 1)];
 
 private _attempts = 0;
 private _maxAttempts = (_desiredZones * 50) max 100;
@@ -136,7 +137,7 @@ while { (count _spawnZones < _desiredZones) && (_attempts < _maxAttempts) } do {
 
 	private _weight = 1;
 	private _zoneLabel = _zoneId + 1;
-	private _debugMarkerName = format ["debug_zone_%1", _zoneId];
+	private _debugMarkerName = format ["debug_%1_zone_%2", _markerKey, _zoneId];
 
 	// [triggerPos, spawnCenter, hasSpawned, garrisonCount, patrolCount, weight, debugMarkerName]
 	_spawnZones pushBack [_triggerPos, _spawnCenter, false, 0, 0, _weight, _debugMarkerName];
@@ -149,13 +150,13 @@ while { (count _spawnZones < _desiredZones) && (_attempts < _maxAttempts) } do {
 		private _debugRadius = _activationDistance;
 		_debugMarker setMarkerSize [_debugRadius, _debugRadius];
 		_debugMarker setMarkerColor "ColorRed";
-		_debugMarker setMarkerAlpha 0.35;
+		_debugMarker setMarkerAlpha 0.5;
 		_debugMarker setMarkerText format ["Z%1", _zoneLabel];
 	};
 };
 
 if (count _spawnZones == 0) then {
-	private _debugMarkerName = "debug_zone_0";
+	private _debugMarkerName = format ["debug_%1_zone_0", _markerKey];
 	_spawnZones pushBack [_markerPos, _markerPos, false, 0, 0, 1, _debugMarkerName];
 };
 
