@@ -33,9 +33,7 @@ private _soundName = selectRandom ["CAS_HellOnEarth", "CAS_GiveEmHell", "CAS_Inb
     missionNamespace setVariable ["casAvailable", true, true];
 
     // Notify the group that support is back online
-    private _group = units group blufor_leader;
-    // Identify the leader to exclude them (if they already know CAS is enabled)
-    private _targets = _groupUnits;
+    private _targets = units group blufor_leader;
 
     // Filter to only include players (AI don't need notifications)
     _targets = _targets select {isPlayer _x};

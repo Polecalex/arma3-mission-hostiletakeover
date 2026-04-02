@@ -100,7 +100,7 @@ private _pos = getMarkerPos _markerName;
 
         private _wpSad = _passGrp addWaypoint [_insertPos, 0];
         _wpSad setWaypointType "SAD";
-        _wpMove setWaypointFormation "FILE";
+        _wpSad setWaypointFormation "FILE";
 
         private _wpCycle = _passGrp addWaypoint [_insertPos, 0];
         _wpCycle setWaypointType "CYCLE";
@@ -128,7 +128,7 @@ private _pos = getMarkerPos _markerName;
         _wpExit setWaypointSpeed "NORMAL";
 
         waitUntil {
-            (_veh distance2D _safeInsertPos > 25) || !alive _veh || _crewGrp
+            (_veh distance2D _safeInsertPos > 25) || !alive _veh || !alive _crewGrp
         };
 
         if (!alive _veh || !alive _crewGrp) exitWith {};
@@ -138,8 +138,8 @@ private _pos = getMarkerPos _markerName;
         //systemChat format ["Vehicle %1 departing insertion zone", _veh];
 
         // Optional: Delete vehicle after it leaves
-        [_veh, _exitPos] spawn {
-            params ["_vehicle", "_exit"];
+        [_veh, _exitPos, _crewGrp] spawn {
+            params ["_vehicle", "_exit", "_crewGrp"];
 
             waitUntil {
                 (_vehicle distance2D _exit < 100) || !alive _vehicle || !alive _crewGrp

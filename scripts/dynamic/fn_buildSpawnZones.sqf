@@ -82,7 +82,9 @@ while { (count _spawnZones < _desiredZones) && (_attempts < _maxAttempts) } do {
 	for "_c" from 1 to _candidatePoolSize do {
 		private _candidateRaw = [_markerPos, random _markerRadius, random 360] call BIS_fnc_relPos;
 		private _candidate = [_candidateRaw, 0, 40, 3, 0, 0.5, 0] call BIS_fnc_findSafePos;
-		if ((_candidate distance2D _markerPos) > _markerRadius || {_candidate isEqualTo [0, 0, 0]}) then {
+		if ((_candidate distance2D _markerPos) > _markerRadius || {
+			_candidate isEqualTo [0, 0, 0]
+		}) then {
 			_candidate = _candidateRaw;
 		};
 		if (_candidate distance2D _markerPos > _markerRadius) then {
@@ -118,7 +120,9 @@ while { (count _spawnZones < _desiredZones) && (_attempts < _maxAttempts) } do {
 	};
 
 	private _accept = false;
-	if ((count _spawnZones) == 0 || {_nearestDist >= _minSpacing}) then {
+	if ((count _spawnZones) == 0 || {
+		_nearestDist >= _minSpacing
+	}) then {
 		_accept = true;
 	} else {
 		if (_nearestDist >= _overlapSpacing && random 1 < 0.35) then {
@@ -187,7 +191,9 @@ private _totalPatrol = _totalInfantry - _totalGarrison;
 private _fnc_distributeUnits = {
 	params ["_unitTotal", "_slotIndex", ["_variance", 0.15]];
 
-	if (_unitTotal <= 0 || {count _spawnZones == 0}) exitWith {};
+	if (_unitTotal <= 0 || {
+		count _spawnZones == 0
+	}) exitWith {};
 
 	private _zoneCount = count _spawnZones;
 	private _basePerZone = floor (_unitTotal / _zoneCount);
